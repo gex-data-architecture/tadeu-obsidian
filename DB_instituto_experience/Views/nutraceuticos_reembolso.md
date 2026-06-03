@@ -1,0 +1,30 @@
+---
+tipo: view
+definer: "root@%"
+security_type: "DEFINER"
+colunas: 9
+tags: [view]
+---
+
+# nutraceuticos_reembolso
+
+## Propriedades
+
+| Propriedade | Valor |
+|---|---|
+| Definer | root@% |
+| Atualizável | YES |
+| Security type | DEFINER |
+| Colunas | 9 |
+
+## Lê de
+[[cartpanda_physical]], [[digistore_physical]]
+
+## Lida por
+—
+
+## Definição SQL
+
+```sql
+with `unified_data` as (select `cp`.`created_at_date` AS `created_at_date`,`cp`.`date_refunded` AS `date_refunded`,`cp`.`total_refund` AS `total_refund`,`cp`.`total_price` AS `total_price`,`cp`.`payment_status` AS `payment_status`,`cp`.`product_name` AS `product_name`,'cartpanda' AS `platform`,(to_days(`cp`.`date_refunded`) - to_days(`cp`.`created_at_date`)) AS `days_to_refund` from `instituto_experience`.`cartpanda_physical` `cp` where ((`cp`.`payment_status` in ('approved','refunded','chargeback','refunded_partial')) and (not((lower(`cp`.`client_email`) like '%institutoexperience%')))) union all select `ds`.`created_at_date` AS `created_at_date`,`ds`.`date_refunded` AS `date_refunded`,`ds`.`total_refund` AS `total_refund`,`ds`.`total_price` AS `total_price`,`ds`.`payment_status` AS `payment_status`,`ds`.`product_name` AS `product_name`,'digistore' AS `platform`,(to_days(`ds`.`date_refunded`) - to_days(`ds`.`created_at_date`)) AS `days_to_refund` from `instituto_experience`.`digistore_physical` `ds` where ((`ds`.`payment_status` in ('approved','refunded','chargeback','refunded_partial')) and (not((lower(`ds`.`client_email`) like '%institutoexperience%'))))) select (case when ((`unified_data`.`payment_status` in ('refunded','chargeback','refunded_partial')) and (`unified_data`.`date_refunded` is not null)) then (case when (`unified_data`.`days_to_refund` = 0) then '0' when (`unified_data`.`days_to_refund` between 1 and 7) then '1 to 7' when (`unified_data`.`days_to_refund` between 8 and 14) then '8 to 14' when (`unified_data`.`days_to_refund` between 15 and 21) then '15 to 21' when (`unified_data`.`days_to_refund` between 22 and 28) then '22 to 28' when (`unified_data`.`days_to_refund` between 29 and 35) then '29 to 35' when (`unified_data`.`days_to_refund` between 36 and 42) then '36 to 42' when (`unified_data`.`days_to_refund` between 43 and 49) then '43 to 49' when (`unified_data`.`days_to_refund` between 50 and 56) then '50 to 56' when (`unified_data`.`days_to_refund` between 57 and 63) then '57 to 63' when (`unified_data`.`days_to_refund` between 64 and 70) then '64 to 70' when (`unified_data`.`days_to_refund` between 71 and 77) then '71 to 77' when (`unified_data`.`days_to_refund` between 78 and 84) then '78 to 84' when (`unified_data`.`days_to_refund` >= 85) then '85+' else 'Unidentified' end) else 'Sem Reembolso' end) AS `faixa_dias_reembolso`,(case when ((`unified_data`.`payment_status` in ('refunded','chargeback','refunded_partial')) and (`unified_data`.`date_refunded` is not null)) then (case when (`unified_data`.`days_to_refund` = 0) then 0 when (`unified_data`.`days_to_refund` between 1 and 7) then 1 when (`unified_data`.`days_to_refund` between 8 and 14) then 2 when (`unified_data`.`days_to_refund` between 15 and 21) then 3 when (`unified_data`.`days_to_refund` between 22 and 28) then 4 when (`unified_data`.`days_to_refund` between 29 and 35) then 5 when (`unified_data`.`days_to_refund` between 36 and 42) then 6 when (`unified_data`.`days_to_refund` between 43 and 49) then 7 when (`unified_data`.`days_to_refund` between 50 and 56) then 8 when (`unified_data`.`days_to_refund` between 57 and 63) then 9 when (`unified_data`.`days_to_refund` between 64 and 70) then 10 when (`unified_data`.`days_to_refund` between 71 and 77) then 11 when (`unified_data`.`days_to_refund` between 78 and 84) then 12 when (`unified_data`.`days_to_refund` >= 85) then 13 else 998 end) else 999 end) AS `semana_ordem`,(case when (`unified_data`.`payment_status` in ('refunded','chargeback','refunded_partial')) then `unified_data`.`total_refund` else 0 end) AS `valor_total_reembolso`,`unified_data`.`total_price` AS `valor_total_vendas`,(case when ((`unified_data`.`payment_status` in ('refunded','chargeback','refunded_partial')) and (`unified_data`.`date_refunded` is not null)) then 1 else 0 end) AS `quantidade_reembolsos`,`unified_data`.`platform` AS `plataforma`,(case when (`unified_data`.`product_name` like '% -%') then substring_index(`unified_data`.`product_name`,' -',1) else `unified_data`.`product_name` end) AS `nome_produto`,`unified_data`.`created_at_date` AS `data_pedido`,`unified_data`.`payment_status` AS `payment_status` from `unified_data` order by (case when ((`unified_data`.`payment_status` in ('refunded','chargeback','refunded_partial')) and (`unified_data`.`date_refunded` is not null)) then (case when (`unified_data`.`days_to_refund` = 0) then 0 when (`unified_data`.`days_to_refund` between 1 and 7) then 1 when (`unified_data`.`days_to_refund` between 8 and 14) then 2 when (`unified_data`.`days_to_refund` between 15 and 21) then 3 when (`unified_data`.`days_to_refund` between 22 and 28) then 4 when (`unified_data`.`days_to_refund` between 29 and 35) then 5 when (`unified_data`.`days_to_refund` between 36 and 42) then 6 when (`unified_data`.`days_to_refund` between 43 and 49) then 7 when (`unified_data`.`days_to_refund` between 50 and 56) then 8 when (`unified_data`.`days_to_refund` between 57 and 63) then 9 when (`unified_data`.`days_to_refund` between 64 and 70) then 10 when (`unified_data`.`days_to_refund` between 71 and 77) then 11 when (`unified_data`.`days_to_refund` between 78 and 84) then 12 when (`unified_data`.`days_to_refund` >= 85) then 13 else 998 end) else 999 end)
+```

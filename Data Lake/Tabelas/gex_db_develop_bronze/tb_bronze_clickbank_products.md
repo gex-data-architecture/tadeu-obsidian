@@ -1,0 +1,51 @@
+---
+tipo: tabela-datalake
+database: gex_db_develop_bronze
+ambiente: develop
+camada: bronze
+formato: parquet
+colunas: 12
+tags: [datalake, bronze, develop]
+---
+
+# tb_bronze_clickbank_products
+
+> `gex_db_develop_bronze` · camada **bronze** · ambiente **develop**
+
+## Propriedades
+
+| Propriedade | Valor |
+|---|---|
+| Database | gex_db_develop_bronze |
+| Camada | bronze |
+| Ambiente | develop |
+| Formato | parquet |
+| Location (S3) | `s3://gex-datalake-bronze-develop/mysql_data/clickbank_products/` |
+| Tipo | EXTERNAL_TABLE |
+| Partições | dt_proc |
+| Nº colunas | 12 |
+| Atualizada em | 2026-04-09 10:44:41-03:00 |
+
+## Colunas
+
+| # | Coluna | Tipo |
+|---|---|---|
+| 1 | product_id | string |
+| 2 | account_name | string |
+| 3 | product_name | string |
+| 4 | offer_name | string |
+| 5 | offer_name_locked | boolean |
+| 6 | offer_name_resync | boolean |
+| 7 | price_usd | decimal(10,2) |
+| 8 | commission_pct | decimal(5,2) |
+| 9 | product_status | string |
+| 10 | is_physical | boolean |
+| 11 | created_at | timestamp |
+| 12 | updated_at | timestamp |
+
+## Chaves de partição
+
+- `dt_proc` (date)
+
+## Relacionados
+[[00-Data-Lake]]

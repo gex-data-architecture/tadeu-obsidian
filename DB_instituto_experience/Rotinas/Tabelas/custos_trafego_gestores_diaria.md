@@ -1,0 +1,34 @@
+---
+tipo: tabela
+categoria: "core"
+linhas: 294
+tamanho_mb: 0.08
+colunas: 10
+tem_pk: "Sim"
+alertas: ""
+criada_em: "2026-03-25T19:53:29.000Z"
+tags: [tabela, "categoria/core"]
+---
+
+# custos_trafego_gestores_diaria
+
+## Métricas
+
+| Métrica | Valor |
+|---|---|
+| Categoria | core |
+| Linhas (estim.) | 294 |
+| Tamanho total (MB) | 0.08 |
+| Colunas | 10 |
+| Índices | 2 |
+| Tem PK | Sim |
+| Engine | InnoDB |
+| Leituras (3d) | 588 |
+| Escritas (3d) | 0 |
+| Criada em | 2026-03-25T19:53:29.000Z |
+
+## Quem escreve aqui
+[[refresh_custos_diarios]]
+
+## Quem lê daqui
+[[refresh_dashboard_internal_sales_v2]], [[refresh_gerenciador_meta_vendas_v2]]

@@ -1,0 +1,30 @@
+---
+tipo: view
+definer: "root@%"
+security_type: "DEFINER"
+colunas: 30
+tags: [view]
+---
+
+# nutra_eua_vendas_2
+
+## Propriedades
+
+| Propriedade | Valor |
+|---|---|
+| Definer | root@% |
+| Atualizável | YES |
+| Security type | DEFINER |
+| Colunas | 30 |
+
+## Lê de
+[[cartpanda_physical]], [[digistore_physical]]
+
+## Lida por
+—
+
+## Definição SQL
+
+```sql
+select `ud`.`transaction_id` AS `transaction_id`,`ud`.`client_email` AS `client_email`,`ud`.`product_name` AS `product_name`,(case when (`ud`.`payment_status` in ('approved','refunded_partial')) then `ud`.`product_cost` else NULL end) AS `product_cost`,`ud`.`offer_name` AS `offer_name`,`ud`.`payment_status` AS `payment_status`,`ud`.`total_price` AS `total_price`,`ud`.`commission` AS `commission`,`ud`.`taxes` AS `taxes`,`ud`.`total_refund` AS `total_refund`,`ud`.`has_upsell` AS `has_upsell`,`ud`.`total_price_upsell` AS `total_price_upsell`,`ud`.`has_upsell2` AS `has_upsell2`,`ud`.`total_price_upsell2` AS `total_price_upsell2`,`ud`.`has_upsell3` AS `has_upsell3`,`ud`.`total_price_upsell3` AS `total_price_upsell3`,`ud`.`has_downsell` AS `has_downsell`,`ud`.`total_price_downsell` AS `total_price_downsell`,`ud`.`has_downsell2` AS `has_downsell2`,`ud`.`total_price_downsell2` AS `total_price_downsell2`,`ud`.`has_downsell3` AS `has_downsell3`,`ud`.`total_price_downsell3` AS `total_price_downsell3`,`ud`.`created_at_date` AS `created_at_date`,`ud`.`created_at_hour` AS `created_at_hour`,`ud`.`affiliate_name` AS `affiliate_name`,`ud`.`affiliate_id` AS `affiliate_id`,`ud`.`affiliate_amount` AS `affiliate_amount`,`ud`.`utm_content` AS `utm_content`,`ud`.`platform` AS `platform`,(case when (`ud`.`payment_status` in ('approved','refunded_partial')) then (case when (`ud`.`created_at_date` >= '2025-04-01') then (`ud`.`total_price` * 0.05) else (`ud`.`total_price` * 0.10) end) else 0 end) AS `imposto` from (select `instituto_experience`.`cartpanda_physical`.`transaction_id` AS `transaction_id`,`instituto_experience`.`cartpanda_physical`.`client_email` AS `client_email`,`instituto_experience`.`cartpanda_physical`.`product_name` AS `product_name`,`instituto_experience`.`cartpanda_physical`.`product_cost` AS `product_cost`,`instituto_experience`.`cartpanda_physical`.`offer_name` AS `offer_name`,`instituto_experience`.`cartpanda_physical`.`payment_status` AS `payment_status`,`instituto_experience`.`cartpanda_physical`.`total_price` AS `total_price`,`instituto_experience`.`cartpanda_physical`.`commission` AS `commission`,`instituto_experience`.`cartpanda_physical`.`taxes` AS `taxes`,`instituto_experience`.`cartpanda_physical`.`total_refund` AS `total_refund`,`instituto_experience`.`cartpanda_physical`.`has_upsell` AS `has_upsell`,`instituto_experience`.`cartpanda_physical`.`total_price_upsell` AS `total_price_upsell`,`instituto_experience`.`cartpanda_physical`.`has_upsell2` AS `has_upsell2`,`instituto_experience`.`cartpanda_physical`.`total_price_upsell2` AS `total_price_upsell2`,`instituto_experience`.`cartpanda_physical`.`has_upsell3` AS `has_upsell3`,`instituto_experience`.`cartpanda_physical`.`total_price_upsell3` AS `total_price_upsell3`,`instituto_experience`.`cartpanda_physical`.`has_downsell` AS `has_downsell`,`instituto_experience`.`cartpanda_physical`.`total_price_downsell` AS `total_price_downsell`,`instituto_experience`.`cartpanda_physical`.`has_downsell2` AS `has_downsell2`,`instituto_experience`.`cartpanda_physical`.`total_price_downsell2` AS `total_price_downsell2`,`instituto_experience`.`cartpanda_physical`.`has_downsell3` AS `has_downsell3`,`instituto_experience`.`cartpanda_physical`.`total_price_downsell3` AS `total_price_downsell3`,`instituto_experience`.`cartpanda_physical`.`created_at_date` AS `created_at_date`,`instituto_experience`.`cartpanda_physical`.`created_at_hour` AS `created_at_hour`,`instituto_experience`.`cartpanda_physical`.`affiliate_name` AS `affiliate_name`,`instituto_experience`.`cartpanda_physical`.`affiliate_id` AS `affiliate_id`,`instituto_experience`.`cartpanda_physical`.`affiliate_amount` AS `affiliate_amount`,`instituto_experience`.`cartpanda_physical`.`utm_content` AS `utm_content`,'cartpanda' AS `platform` from `instituto_experience`.`cartpanda_physical` where (`instituto_experience`.`cartpanda_physical`.`payment_status` in ('approved','refunded','chargeback','refunded_partial')) union all select `instituto_experience`.`digistore_physical`.`transaction_id` AS `transaction_id`,`instituto_experience`.`digistore_physical`.`client_email` AS `client_email`,`instituto_experience`.`digistore_physical`.`product_name` AS `product_name`,`instituto_experience`.`digistore_physical`.`product_cost` AS `product_cost`,`instituto_experience`.`digistore_physical`.`offer_name` AS `offer_name`,`instituto_experience`.`digistore_physical`.`payment_status` AS `payment_status`,`instituto_experience`.`digistore_physical`.`total_price` AS `total_price`,`instituto_experience`.`digistore_physical`.`commission` AS `commission`,`instituto_experience`.`digistore_physical`.`taxes` AS `taxes`,`instituto_experience`.`digistore_physical`.`total_refund` AS `total_refund`,NULL AS `has_upsell`,NULL AS `total_price_upsell`,NULL AS `has_upsell2`,NULL AS `total_price_upsell2`,NULL AS `has_upsell3`,NULL AS `total_price_upsell3`,NULL AS `has_downsell`,NULL AS `total_price_downsell`,NULL AS `has_downsell2`,NULL AS `total_price_downsell2`,NULL AS `has_downsell3`,NULL AS `total_price_downsell3`,`instituto_experience`.`digistore_physical`.`created_at_date` AS `created_at_date`,`instituto_experience`.`digistore_physical`.`created_at_hour` AS `created_at_hour`,`instituto_experience`.`digistore_physical`.`affiliate_name` AS `affiliate_name`,`instituto_experience`.`digistore_physical`.`affiliate_id` AS `affiliate_id`,`instituto_experience`.`digistore_physical`.`affiliate_amount` AS `affiliate_amount`,`instituto_experience`.`digistore_physical`.`utm_content` AS `utm_content`,'digistore' AS `platform` from `instituto_experience`.`digistore_physical` where (`instituto_experience`.`digistore_physical`.`payment_status` in ('approved','refunded','chargeback','refunded_partial'))) `ud`
+```
