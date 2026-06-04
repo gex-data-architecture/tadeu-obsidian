@@ -3,6 +3,42 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-04 — EDIT (reorganização: pasta `Limpeza e Migração/`)
+- Criada `DB_instituto_experience/Limpeza e Migração/` reunindo tudo de limpeza + migração.
+- **Migração mantida separada** dentro da pasta: `migracao-data_team-mapa.md` (movida via git mv).
+- **3 markdown fundidos em 2:** os antigos `_checklist-limpeza.md`, `limpeza-views-nao-utilizadas.md`
+  e `limpeza-tabelas-vazias.md` viraram **`Regras de Exclusão.md`** (princípio read-only, regras
+  invioláveis, passo a passo de tabelas e views, limites/janela de 9d, buckets, histórico de execução)
+  e **`Checklist de Limpeza.md`** (só o checklist 356 tabelas + 92 views com coluna *Excluir?*).
+- Scripts `.sql` movidos para a pasta e renomeados p/ clareza: `limpeza-tabelas-quarentena.sql`,
+  `limpeza-tabelas-drop-datado.sql`, `limpeza-views-quarentena.sql`, `limpeza-views-drop-datado.sql`.
+- Wikilinks do checklist reapontados p/ [[Regras de Exclusão]]. Nada commitado no git ainda.
+
+## 2026-06-04 — EDIT (checklist mestre de limpeza: 356 tabelas + 92 views)
+- Criado `DB_instituto_experience/_checklist-limpeza.md` (CURADO): todas as **356 tabelas** e **92 views**
+  em tabelas markdown, agrupadas por análise (vazia/com dados/referenciada/swap; quebrada/sem uso/em uso),
+  com coluna **Excluir?** para o usuário marcar (`x`). Linhas geradas via SQL CONCAT (read-only) p/ evitar erro.
+- ⚠️ Anotado no doc: janela de uso = ~9 dias (uptime); estimador de linhas mente; leitura externa invisível →
+  quarentena; e que a re-sondagem de views poluiu o digest (classificação usa o snapshot pré-sondagem).
+- Próximo: usuário marca a coluna Excluir? → eu gero quarentena/DROP só com o marcado. Nada commitado no git.
+
+## 2026-06-04 — LINT (limpeza de views: 64 candidatas de 92, 5 quebradas)
+- Análise read-only das **92 views** de `instituto_experience` (skill `limpeza-banco`).
+  Sinais usados: referência estática (procedure/event/view) + uso em runtime
+  (`performance_schema.events_statements_summary_by_digest`) + integridade (`SELECT ... LIMIT 0`).
+- **28 mantidas** (uso em runtime e/ou ref. estática — ex.: `vw_enriquecimento_buygoods` 89.870 exec,
+  `affiliate_nutra`, `affiliate_nutra_usd`, `internal_sales`). **5 quebradas** (DROP direto):
+  `unified_data_view`, `v_team_performance`, `view_nutra_eua_acompanhamento`,
+  `view_unified_data_all_with_upsell`, `vw_enriquecimento_dados` (substituída pela `_buygoods`).
+  **59 válidas-porém-paradas** (sem uso ≥9 dias) → quarentena.
+- ⚠️ **Janela curta:** `performance_schema` cobre só ~8,9 dias (uptime; restart 26/05) e `general_log`
+  está OFF — "sem uso" = "não usada em ~9 dias", não "nunca". Por isso a recomendação é
+  **quarentena por RENAME `_zzdrop_`** antes do DROP (teste reversível p/ pegar leitura externa/Looker).
+- Cruzado com `Dashboards/` — nenhuma candidata referenciada (notas ainda em rascunho).
+- Artefatos: `DB_instituto_experience/limpeza-views-nao-utilizadas.md`,
+  `limpeza-views-quarentena.sql`, `limpeza-views-drop-datado.sql`.
+- **Nenhum DDL executado** (MCP read-only); execução pelo DBA/admin. Ainda não commitado no git.
+
 ## 2026-06-03 — EDIT (Entrevistas: transcripts + avaliação de 2 candidatos Data View/BI)
 - Nova pasta **`entrevistas/`** (CURADO) com 2 notas de entrevista (vaga Analista de Dados / BI, Sênior→pode virar Pleno):
   **`Kleriston.md`** e **`Júlio.md`**. Cada uma: frontmatter (`candidato`, `gravacao` Fathom, `nota_case`,
