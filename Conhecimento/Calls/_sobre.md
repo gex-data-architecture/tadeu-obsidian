@@ -8,4 +8,4 @@ tags: [moc, conhecimento, call]
 > Transforme action items em [[Épicos]] ou tarefas e linke bidirecional.
 
 ## Páginas
-*(adicione conforme criar)*
+- [[2026-06-03 - Alinhamento Teddy (consultoria de dados)]] — benchmark de arquitetura com a consultoria Teddy (Flávio); orquestração, star schema, governança, Lovable.

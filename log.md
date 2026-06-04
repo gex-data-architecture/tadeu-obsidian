@@ -3,6 +3,29 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-04 — EDIT (Buygoods: doc técnica da camada silver)
+- Criada `Documentações Fontes de Dados/Buygoods/doc_silver_buygoods.md` (CURADO): regras e processo
+  para gerar a **silver unificada** `tb_gex_buygoods_unified` a partir das 2 silvers no Athena/S3 —
+  **webhook** (`tb_buygoods_physical_new`, fonte da verdade) + **API** (`tb_silver_buygoods_orders`,
+  complemento de `transaction_id` faltante via LEFT ANTI JOIN). Documenta de-para `subid*→utm_*`,
+  `cancel_reason` só-API, fluxo do job `gex-buygoods-unified-to-mysql-prod` (8 passos + swap atômico +
+  salvaguarda 90%) e o schema real de 62 colunas (origem por coluna). Fecha pendência do [[Buygoods]].
+  Acrescentado **§6 Dicionário de campos campo a campo** (representa / cálculo·origem do payload webhook|API /
+  particularidades), com domínios perfilados na tabela real (transaction_type, payment_status, sales_type,
+  câmbio ~5,0, cobertura utm/cancel_reason por data_source) — read-only.
+- Atualizado `Buygoods.md` (links + pendência marcada). Baseado no script `silver_to_mysql_buygoods_unified.py`
+  e no schema lido do MySQL (read-only). Ainda não commitado no git.
+
+## 2026-06-04 — EDIT (Calls: resumo da call de consultoria Teddy × GEX)
+- Criada `Conhecimento/Calls/2026-06-03 - Alinhamento Teddy (consultoria de dados).md` (CURADO):
+  resumo da call (78 min, Fathom) com a consultoria **Teddy/TED** (responsável Flávio Vieira;
+  Diego Pinto eng., Gabriel Ferreira BI). Estrutura: resumo executivo, pontos por tema (arquitetura,
+  orquestração, modelagem, governança, Lovable/IA), comparativo GEX×Teddy, action items e
+  **10 planos de ação priorizados** (esforço × impacto).
+- Gerada via **workflow** (5 agentes extraindo temas + síntese); revisada à mão para preencher
+  Orquestração e corrigir IaC/versionamento (a GEX já usa Terraform+GitHub via Léo).
+- Índice `Conhecimento/Calls/_sobre.md` atualizado. Ainda não commitado no git.
+
 ## 2026-06-04 — EDIT (reorganização: pasta `Limpeza e Migração/`)
 - Criada `DB_instituto_experience/Limpeza e Migração/` reunindo tudo de limpeza + migração.
 - **Migração mantida separada** dentro da pasta: `migracao-data_team-mapa.md` (movida via git mv).
