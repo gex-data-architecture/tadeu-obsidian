@@ -3,6 +3,28 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-04 — EDIT (Sistema: instalada 3ª skill do CTO — sincronizar-conhecimento)
+- Instalada `.claude/skills/sincronizar-conhecimento/SKILL.md` (verbatim). Catálogo → **6 skills**.
+- ⚠️ Mesma ressalva: assume `_Sistema/Base de Conhecimento (Claude)/`, regra de espelhamento no `CLAUDE.md`
+  e skip-list do Gabriel. Adaptar na reorg. Completam o trio do CTO: populate + transcript-extractor + sincronizar.
+
+## 2026-06-04 — EDIT (Sistema: instaladas skills do CTO — populate + transcript-extractor)
+- Instaladas (verbatim, como o CTO enviou): `.claude/skills/populate/SKILL.md` e
+  `.claude/skills/transcript-extractor/SKILL.md`. Catálogo atualizado (5 skills) com aviso de compatibilidade.
+- ⚠️ Ambas pressupõem a **estrutura do vault do Gabriel** (`_Sistema/_raw_files/`, `BUs/`, `Departamentos/`,
+  `Parceiros/`, `Pessoas/<Nome>/1on1/`, `_Templates`, "Gabriel é o dono") — não existe no nosso vault.
+  E dependem de `references/formats.md` e `references/routing.md` ainda não recebidos. Adaptar após a reorg
+  ([[Decisao-2026-06-04-reorganizacao-pastas-vault]]). Não rodar as skills até alinhar. Ainda não commitado.
+
+## 2026-06-04 — EDIT (Sistema: skill + catálogo de skills)
+- Criada skill **`catalogo-skills`** (`.claude/skills/catalogo-skills/SKILL.md`): varre `.claude/skills/`
+  e gera `Sistema/Skills/_catalogo.md` (o que faz / quando usar por skill). Alinhada à call com o CTO (04/06).
+- Criada pasta **`Sistema/Skills/`** com `_catalogo.md` listando as 3 skills atuais (catalogo-datalake,
+  limpeza-banco, catalogo-skills) + 4 planejadas (transcript-extractor, popular-conhecimento,
+  sincronizar-conhecimento, onboard-gateway).
+- `Sistema/` é o início da nova arquitetura ("sistema" separado de "conhecimento"). Proposta de
+  reorganização completa de pastas em discussão (não executada). Ainda não commitado no git.
+
 ## 2026-06-04 — EDIT (Buygoods: doc técnica da camada silver)
 - Criada `Documentações Fontes de Dados/Buygoods/doc_silver_buygoods.md` (CURADO): regras e processo
   para gerar a **silver unificada** `tb_gex_buygoods_unified` a partir das 2 silvers no Athena/S3 —
