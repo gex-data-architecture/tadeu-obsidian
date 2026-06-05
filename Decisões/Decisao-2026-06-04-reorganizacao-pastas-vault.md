@@ -139,5 +139,6 @@ Revisar se: a árvore criar atrito de navegação; entrar um novo banco (Postgre
 - [ ] (Separado) Instalar skills de ingestão quando o CTO enviar os scripts; plugins `superpowers`/`obsidian-cli` com o Davi.
 
 ## Referências
-- Call 04/06 com o CTO (Gabriel) · [[2026-06-03 - Alinhamento Teddy (consultoria de dados)]] (decisão de arquitetura relacionada)
+- Origem: [[2026-06-04 Sessão de trabalho — Estrutura e governança do vault (Gabriel)]] (ata) · [[2026-06-04 Sessão — Estrutura do Vault (Gabriel)]] (transcript cru)
+- Relacionada: [[2026-06-03 - Alinhamento Teddy (consultoria de dados)]]
 - [[_Sistema/Skills/_catalogo]] · [[migracao-data_team-mapa]]

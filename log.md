@@ -3,6 +3,12 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-04 — EDIT (Reuniões: ata + cru da sessão com o CTO sobre o vault)
+- Arquivada a sessão Gabriel × Tadeu (04/06) que não tinha sido salva: transcript **cru** em
+  `_Sistema/_raw_files/reuniões/processado/` + **ata** estruturada em `Reuniões/` (resumo, decisões,
+  action items). Linkada bidirecional com a [[Decisao-2026-06-04-reorganizacao-pastas-vault|ADR-001]] (`resultou_em`).
+- Primeiro uso real da esteira `_raw_files` (o cru estava só no chat; agora preservado/reprocessável).
+
 ## 2026-06-04 — REORG (estrutura de pastas alinhada ao CTO; ADR-001 executado)
 - Executada a reorganização via **git mv** (histórico preservado): **`_Sistema/`** (`_raw_files/{reuniões,documentos,notas}/{pendente,processado}`,
   `Capturas (log de populate)/`, `Base de Conhecimento (Claude)/`, `_Templates/`, `Skills/`);

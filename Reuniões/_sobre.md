@@ -11,6 +11,6 @@ tags: [moc, reunioes]
 > `Pessoas/<nome>/1on1/`. Aqui ficam só as reuniões internas do time (FCA, brainstorm, planejamento).
 
 ## Páginas
-- _(reuniões internas entram aqui)_
+- [[2026-06-04 Sessão de trabalho — Estrutura e governança do vault (Gabriel)]] — Gabriel (CTO) orienta a reorganização do vault; origem da [[Decisao-2026-06-04-reorganizacao-pastas-vault|ADR-001]].
 
 > Ex. de call com parceiro: [[2026-06-03 - Alinhamento Teddy (consultoria de dados)]] (em `Parceiros/Teddy/Reuniões/`).
