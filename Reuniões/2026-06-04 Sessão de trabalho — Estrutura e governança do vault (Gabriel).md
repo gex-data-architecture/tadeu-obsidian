@@ -22,13 +22,13 @@ reorganizar pastas → construir skill de **onboarding de gateway** → testar r
 
 ## 🧱 Discussão detalhada (pontos + porquês)
 - **Separar "Sistema" de conhecimento.** Tudo que faz o vault rodar (CLAUDE.md, templates, skills, raw files)
-  vai em `_Sistema/`. *Porquê:* a árvore fica navegável e a IA acha a informação mais fácil.
+  vai em `Sistema/`. *Porquê:* a árvore fica navegável e a IA acha a informação mais fácil.
 - **`_raw_files` = camada bronze do conhecimento** (3 categorias: reuniões, documentos, notas; cada uma
   `pendente`/`processado`). *Porquê:* preservar o cru permite **reprocessar** (ex.: numa reorganização) — o
   conhecimento não fica preso só na versão destilada. (Foi exatamente o que faltou: esta call não tinha sido salva.)
 - **Memória do Cloud Code × base de conhecimento.** O Claude fica "mais inteligente" não só pelo vault, mas pela
   **memória local** (`~/.claude/.../memory/`). Como ela não viaja no git, é preciso **espelhá-la** numa base
-  versionada (`_Sistema/Base de Conhecimento (Claude)/`) — senão quem clona (Léo) recebe um Claude "burro".
+  versionada (`Sistema/Base de Conhecimento (Claude)/`) — senão quem clona (Léo) recebe um Claude "burro".
   *Porquê:* nivelar o resultado entre as máquinas do time.
 - **"Casa = dono".** A nota mora na entidade que a possui (Pessoa, Parceiro, Projeto, domínio), não num balde
   por tipo. *Porquê:* contexto junto do dono ajuda análise/modelagem; evita duplicar BUs/departamentos.
@@ -42,7 +42,7 @@ reorganizar pastas → construir skill de **onboarding de gateway** → testar r
 - **Disciplina:** gravar **toda** reunião; usar IA pelo terminal pra tudo; "turbinar com IA, não fazer sozinho".
 
 ## ✅ Decisões
-- Adotar a estrutura no padrão do Gabriel (`_Sistema`, `_raw_files`, "casa = dono", Pessoas/Parceiros) → **ADR-001**.
+- Adotar a estrutura no padrão do Gabriel (`Sistema`, `_raw_files`, "casa = dono", Pessoas/Parceiros) → **ADR-001**.
 - Usar **ingestão estruturada** (skills) em vez de jogar transcript solto no chat.
 - Espelhar conhecimento de empresa na base versionada (regra no `CLAUDE.md`).
 
@@ -64,4 +64,4 @@ reorganizar pastas → construir skill de **onboarding de gateway** → testar r
 - Geradores GERADO (`Inventario MSQL/*.py`, `gerar_datalake.py`) ainda apontam para caminhos antigos.
 
 ## Relacionados
-[[Decisao-2026-06-04-reorganizacao-pastas-vault]] · [[2026-06-04 Sessão — Estrutura do Vault (Gabriel)]] · [[_Sistema/Skills/_catalogo]]
+[[Decisao-2026-06-04-reorganizacao-pastas-vault]] · [[2026-06-04 Sessão — Estrutura do Vault (Gabriel)]] · [[Sistema/Skills/_catalogo]]

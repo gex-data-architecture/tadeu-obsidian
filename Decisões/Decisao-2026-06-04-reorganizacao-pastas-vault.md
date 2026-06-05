@@ -24,13 +24,13 @@ objetivo final é deixar o conhecimento **estruturado e fácil de navegar** — 
 onboarding de novas fontes/gateways.
 
 ## Decisão (proposta)
-**Reorganizar o vault em pastas-mãe por domínio: separar o `_Sistema` (máquina) do conteúdo,
+**Reorganizar o vault em pastas-mãe por domínio: separar o `Sistema` (máquina) do conteúdo,
 **dissolver o balde genérico "Conhecimento"** (cada nota vai para a entidade dona — "casa = dono"),
 unificar os dois bancos em `Banco de Dados/<engine>/<db>` e alinhar os nomes aos que as skills do
 CTO esperam.**
 
 ### Princípios (da call + das 3 skills do CTO)
-1. Separar **`_Sistema`** (máquina do vault) do **conteúdo**. "Conhecimento" é um conceito, **não uma pasta-balde**.
+1. Separar **`Sistema`** (máquina do vault) do **conteúdo**. "Conhecimento" é um conceito, **não uma pasta-balde**.
 2. **`_raw_files`** = camada bronze do conhecimento: todo input cru (reuniões, documentos, notas) guardado e **reprocessável**.
 3. **"Casa = dono":** a nota mora na **entidade que a possui** (pessoa, parceiro, projeto, banco, domínio) — **não** num balde por tipo. Não existe pasta global de "Reuniões" nem balde "Conhecimento" (regra explícita da skill `transcript-extractor`).
 4. **Não ter duas pastas-raiz de mesma natureza** — unificar os bancos; mesma estrutura por banco.
@@ -43,7 +43,7 @@ CTO esperam.**
 ```
 DataTeamDocs/
 ├── CLAUDE.md · log.md                          (raiz)
-├── _Sistema/                                   (máquina; "_" ordena no topo; nomes batem com as skills)
+├── Sistema/                                   (máquina; "_" ordena no topo; nomes batem com as skills)
 │   ├── _raw_files/                             (camada BRONZE do conhecimento — cru, reprocessável)
 │   │   ├── reuniões/ (pendente · processado)
 │   │   ├── documentos/ (pendente · processado)
@@ -82,7 +82,7 @@ DataTeamDocs/
 | `Data Lake` | `Arquitetura/Data Lake/` |
 | `Documentações Fontes de Dados` | `Fontes de Dados/` |
 | `Entrevistas` | `Pessoas/Recrutamento/` |
-| `Templates` | `_Sistema/_Templates/` |
+| `Templates` | `Sistema/_Templates/` |
 | `Epicos` | `Projetos/` |
 | `Validações` + `Fluxos-N8N` + `Planilhas Manuais` | `Operação/` |
 | `Conhecimento/Calls` (parceiro, ex.: Teddy) | `Parceiros/<nome>/Reuniões/` |
@@ -98,11 +98,11 @@ DataTeamDocs/
 "Conhecimento" agrupa **por tipo** (Calls/Decisões/Dossiês), desligado do dono. O CTO usa
 **"casa = dono"**: a nota mora na entidade que a possui. A skill `transcript-extractor` é
 explícita: *"a nota mora na entidade dona… não existe mais pasta global de Reuniões."* No vault
-dele **não existe** "Conhecimento" — o único "de conhecimento" é o `_Sistema/Base de Conhecimento
+dele **não existe** "Conhecimento" — o único "de conhecimento" é o `Sistema/Base de Conhecimento
 (Claude)/`, que é o **espelho da memória do Claude** (coisa específica, não balde). Logo, dissolver.
 
 ## Alinhar nomes às skills do CTO (reduz adaptação)
-Adotar os nomes exatos que as skills esperam (`_Sistema/_raw_files/{reuniões,documentos,notas}/`,
+Adotar os nomes exatos que as skills esperam (`Sistema/_raw_files/{reuniões,documentos,notas}/`,
 `Capturas (log de populate)/`, `Base de Conhecimento (Claude)/`, `_Templates/`, `Parceiros/<nome>/Reuniões/`,
 `Pessoas/<Nome>/1on1/`, `Decisões/`) faz `populate`/`transcript-extractor`/`sincronizar-conhecimento`
 rodarem quase sem alteração — sobra adaptar **dono** (Tadeu, não Gabriel) e a skip-list, e adicionar a
@@ -141,4 +141,4 @@ Revisar se: a árvore criar atrito de navegação; entrar um novo banco (Postgre
 ## Referências
 - Origem: [[2026-06-04 Sessão de trabalho — Estrutura e governança do vault (Gabriel)]] (ata) · [[2026-06-04 Sessão — Estrutura do Vault (Gabriel)]] (transcript cru)
 - Relacionada: [[2026-06-03 - Alinhamento Teddy (consultoria de dados)]]
-- [[_Sistema/Skills/_catalogo]] · [[migracao-data_team-mapa]]
+- [[Sistema/Skills/_catalogo]] · [[migracao-data_team-mapa]]

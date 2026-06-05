@@ -18,7 +18,7 @@ A falha #1 é tratar o dump como uma reunião. **Não é.**
 | | transcript-extractor | populate (esta) |
 |---|---|---|
 | Input | Conversa gravada (Loom/Fathom, vários locutores) | Dump solo: texto, ideia transcrita, doc consolidado |
-| Artefato central | Nota de **reunião** roteada pra entidade (`<área>/Reuniões/`, `Pessoas/<nome>/1on1/`, etc.) | **Captura de Contexto** em `_Sistema/Capturas (log de populate)/` |
+| Artefato central | Nota de **reunião** roteada pra entidade (`<área>/Reuniões/`, `Pessoas/<nome>/1on1/`, etc.) | **Captura de Contexto** em `Sistema/Capturas (log de populate)/` |
 | Foco | Logar a reunião | Distribuir conhecimento nas entidades |
 
 **Guardrail:** se o conteúdo tiver timestamps + locutores, cabeçalho Fathom, ou for claramente uma conversa entre pessoas → **pare e sugira `transcript-extractor`**.
@@ -40,14 +40,14 @@ A falha #1 é tratar o dump como uma reunião. **Não é.**
 ## Input → staging
 | Modo | Staging do raw |
 |---|---|
-| `documento` (.md consolidado) | `"_Sistema/_raw_files/documentos/pendente/"` → `"…/documentos/processado/"` |
-| `brainstorm` / `texto` | `"_Sistema/_raw_files/notas/pendente/"` → `"…/notas/processado/"` |
+| `documento` (.md consolidado) | `"Sistema/_raw_files/documentos/pendente/"` → `"…/documentos/processado/"` |
+| `brainstorm` / `texto` | `"Sistema/_raw_files/notas/pendente/"` → `"…/notas/processado/"` |
 
-**Nunca** stageie em `"_Sistema/_raw_files/reuniões/"` — essa pasta é só para transcrições de **reunião**.
+**Nunca** stageie em `"Sistema/_raw_files/reuniões/"` — essa pasta é só para transcrições de **reunião**.
 
 ## A âncora: Captura de Contexto
-- Local: `_Sistema/Capturas (log de populate)/` (maquinário, não conteúdo). Nome: `YYYY-MM-DD Captura — <Tema>.md`.
-- Template: `"_Sistema/_Templates/_Template Captura.md"` (`tipo: captura`, `origem`, `fonte`→raw, `areas`, `participantes`, `tags: [captura]`).
+- Local: `Sistema/Capturas (log de populate)/` (maquinário, não conteúdo). Nome: `YYYY-MM-DD Captura — <Tema>.md`.
+- Template: `"Sistema/_Templates/_Template Captura.md"` (`tipo: captura`, `origem`, `fonte`→raw, `areas`, `participantes`, `tags: [captura]`).
 - Seção **Conhecimento destilado** lista, por tipo, links de tudo que a Captura populou — é o índice de rastreabilidade.
 
 ## Regras de entidade (o delta que falha sem a skill)

@@ -5,12 +5,12 @@
 
 ## 2026-06-04 — EDIT (Reuniões: ata + cru da sessão com o CTO sobre o vault)
 - Arquivada a sessão Gabriel × Tadeu (04/06) que não tinha sido salva: transcript **cru** em
-  `_Sistema/_raw_files/reuniões/processado/` + **ata** estruturada em `Reuniões/` (resumo, decisões,
+  `Sistema/_raw_files/reuniões/processado/` + **ata** estruturada em `Reuniões/` (resumo, decisões,
   action items). Linkada bidirecional com a [[Decisao-2026-06-04-reorganizacao-pastas-vault|ADR-001]] (`resultou_em`).
 - Primeiro uso real da esteira `_raw_files` (o cru estava só no chat; agora preservado/reprocessável).
 
 ## 2026-06-04 — REORG (estrutura de pastas alinhada ao CTO; ADR-001 executado)
-- Executada a reorganização via **git mv** (histórico preservado): **`_Sistema/`** (`_raw_files/{reuniões,documentos,notas}/{pendente,processado}`,
+- Executada a reorganização via **git mv** (histórico preservado): **`Sistema/`** (`_raw_files/{reuniões,documentos,notas}/{pendente,processado}`,
   `Capturas (log de populate)/`, `Base de Conhecimento (Claude)/`, `_Templates/`, `Skills/`);
   **`Banco de Dados/MySQL/{instituto_experience,data_team}`** (unifica os 2 `DB_*`);
   **`Arquitetura/{Data Lake, Migração data_team}`**; **`Fontes de Dados/`**; **`Pessoas/Recrutamento/`**;
@@ -26,13 +26,13 @@
 
 ## 2026-06-04 — EDIT (Sistema: instalada 3ª skill do CTO — sincronizar-conhecimento)
 - Instalada `.claude/skills/sincronizar-conhecimento/SKILL.md` (verbatim). Catálogo → **6 skills**.
-- ⚠️ Mesma ressalva: assume `_Sistema/Base de Conhecimento (Claude)/`, regra de espelhamento no `CLAUDE.md`
+- ⚠️ Mesma ressalva: assume `Sistema/Base de Conhecimento (Claude)/`, regra de espelhamento no `CLAUDE.md`
   e skip-list do Gabriel. Adaptar na reorg. Completam o trio do CTO: populate + transcript-extractor + sincronizar.
 
 ## 2026-06-04 — EDIT (Sistema: instaladas skills do CTO — populate + transcript-extractor)
 - Instaladas (verbatim, como o CTO enviou): `.claude/skills/populate/SKILL.md` e
   `.claude/skills/transcript-extractor/SKILL.md`. Catálogo atualizado (5 skills) com aviso de compatibilidade.
-- ⚠️ Ambas pressupõem a **estrutura do vault do Gabriel** (`_Sistema/_raw_files/`, `BUs/`, `Departamentos/`,
+- ⚠️ Ambas pressupõem a **estrutura do vault do Gabriel** (`Sistema/_raw_files/`, `BUs/`, `Departamentos/`,
   `Parceiros/`, `Pessoas/<Nome>/1on1/`, `_Templates`, "Gabriel é o dono") — não existe no nosso vault.
   E dependem de `references/formats.md` e `references/routing.md` ainda não recebidos. Adaptar após a reorg
   ([[Decisao-2026-06-04-reorganizacao-pastas-vault]]). Não rodar as skills até alinhar. Ainda não commitado.

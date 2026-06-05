@@ -28,7 +28,7 @@ informação nova nas páginas existentes.
 DataTeamDocs/
   CLAUDE.md · log.md                         # schema + diário (raiz)
 
-  _Sistema/                                  # MÁQUINA do vault ("_" agrupa no topo)
+  Sistema/                                  # MÁQUINA do vault ("_" agrupa no topo)
     _raw_files/{reuniões,documentos,notas}/{pendente,processado}/   # camada BRONZE do conhecimento (cru, reprocessável)
     Capturas (log de populate)/              # âncoras da skill populate
     Base de Conhecimento (Claude)/           # espelho da memória do Claude (skill sincronizar-conhecimento)
@@ -61,7 +61,7 @@ DataTeamDocs/
 ### 📂 Regra de organização por banco
 - Cada banco relacional vira **`Banco de Dados/<engine>/<db>/`** (`Banco de Dados/MySQL/instituto_experience`,
   `…/data_team`), com APENAS as notas **geradas** + o seu **`00-Indice.md`**. Mesma estrutura por banco (Postgres/futuros idem).
-- **`_Sistema/`** é a máquina (templates, raw files, skills, base de conhecimento). O conteúdo curado mora nas pastas por domínio/dono.
+- **`Sistema/`** é a máquina (templates, raw files, skills, base de conhecimento). O conteúdo curado mora nas pastas por domínio/dono.
 - Dataview: `FROM "Banco de Dados/MySQL/instituto_experience/Tabelas"`.
 
 > **Padrão do índice:** vários `00-Indice.md` → **linke com o caminho**:
@@ -137,7 +137,7 @@ sequência abaixo na pasta `Inventario MSQL/` — ela relê o banco e regenera o
 
 ## 8. Memória do Claude → Base de Conhecimento (regra de espelhamento)
 A inteligência do Claude mora em dois lugares: a **memória local** (`~/.claude/.../memory/`, **não** versionada)
-e a **`_Sistema/Base de Conhecimento (Claude)/`** (versionada, viaja no git). **Ao salvar uma memória de
+e a **`Sistema/Base de Conhecimento (Claude)/`** (versionada, viaja no git). **Ao salvar uma memória de
 conhecimento de EMPRESA** (banco, métricas, processos, ferramentas, decisões), grave-a **também** na Base de
 Conhecimento, para quem clona o repo herdar. **Não espelhe** conteúdo pessoal/perfil de indivíduo nem
 segredos/credenciais — esses ficam só na memória local. A skill **`sincronizar-conhecimento`** é a rede de

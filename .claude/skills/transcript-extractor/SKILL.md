@@ -1,6 +1,6 @@
 ---
 name: transcript-extractor
-description: Use when turning a meeting transcript (Loom or Fathom export) into a structured note in this vault — after a 1:1, FCA, brainstorm, planning session, working/mentoring session, comitê, or partner call, or when asked to process a transcript from "_Sistema/_raw_files/reuniões/pendente/".
+description: Use when turning a meeting transcript (Loom or Fathom export) into a structured note in this vault — after a 1:1, FCA, brainstorm, planning session, working/mentoring session, comitê, or partner call, or when asked to process a transcript from "Sistema/_raw_files/reuniões/pendente/".
 ---
 
 # Transcript Extractor
@@ -12,15 +12,15 @@ Turns a raw call transcript (Loom or Fathom) into a structured meeting note in t
 
 ## When to use
 - The user runs `/transcript-extractor`, usually with a short free-text context ("brainstorm de atendimento e produto com a Tati e o Gustavo, ~20/mai").
-- A transcript lands in `"_Sistema/_raw_files/reuniões/pendente/"` and needs structuring.
+- A transcript lands in `"Sistema/_raw_files/reuniões/pendente/"` and needs structuring.
 - After any recorded meeting: 1:1, FCA, brainstorm, planejamento, sessão de trabalho, comitê, parceiro.
 
 ## Workflow
-1. **Get the transcript** — from the path/context the user gave; else the newest file in `"_Sistema/_raw_files/reuniões/pendente/"`; else pasted text.
+1. **Get the transcript** — from the path/context the user gave; else the newest file in `"Sistema/_raw_files/reuniões/pendente/"`; else pasted text.
 2. **Detect format & parse** — Loom vs Fathom differ a lot; see `references/formats.md`. Normalize noisy entity names (e.g. "Ebolêvis"→Eagle Labs, "Byroots"→MyRoots).
 3. **Resolve allocation metadata** in this order: (a) user context → (b) inference from the transcript → (c) **ask the user**. Required: participantes, data, tipo, área(s)/parceiros, destino.
 4. **CONFIRM before writing** — show the allocation plan (destino + entidades a criar/atualizar). Anything missing or uncertain → ask, never guess. Wait for explicit OK.
-5. **Write** — create the note (structure below), `[[link]]` every participant, create/update related entities from their `_Modelo`/`_Template`. **Sempre retenha o cru:** se o transcript veio como arquivo em `pendente/`, mova-o para `"_Sistema/_raw_files/reuniões/processado/"`; se veio como **texto colado**, salve-o verbatim em `"_Sistema/_raw_files/reuniões/processado/"` como `YYYY-MM-DD <Tipo> — <Tema>.md` (mesmo nome-base da nota). **Nunca destile sem guardar o cru** — vale para toda reunião, mesmo as coladas.
+5. **Write** — create the note (structure below), `[[link]]` every participant, create/update related entities from their `_Modelo`/`_Template`. **Sempre retenha o cru:** se o transcript veio como arquivo em `pendente/`, mova-o para `"Sistema/_raw_files/reuniões/processado/"`; se veio como **texto colado**, salve-o verbatim em `"Sistema/_raw_files/reuniões/processado/"` como `YYYY-MM-DD <Tipo> — <Tema>.md` (mesmo nome-base da nota). **Nunca destile sem guardar o cru** — vale para toda reunião, mesmo as coladas.
 
 ## Routing (tipo → pasta)
 

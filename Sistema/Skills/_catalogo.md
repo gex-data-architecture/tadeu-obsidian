@@ -30,7 +30,7 @@ tags: [sistema, skills, moc]
 
 > ⚠️ **Compatibilidade (instaladas como o CTO enviou):** `transcript-extractor` e `populate` foram
 > escritas para o **vault estratégico do Gabriel** e assumem caminhos/estrutura diferentes dos seus
-> (`_Sistema/_raw_files/`, `BUs/`, `Departamentos/`, `Parceiros/`, `Pessoas/<Nome>/1on1/`, `_Templates`,
+> (`Sistema/_raw_files/`, `BUs/`, `Departamentos/`, `Parceiros/`, `Pessoas/<Nome>/1on1/`, `_Templates`,
 > "Gabriel é o dono"). Também dependem de arquivos `references/formats.md` e `references/routing.md`
 > **ainda não recebidos**. Ver [[Decisao-2026-06-04-reorganizacao-pastas-vault]] — adaptar após alinhar a estrutura.
 
@@ -39,7 +39,7 @@ tags: [sistema, skills, moc]
 |---|---|---|
 | `sincronizar-conhecimento` | Espelha o conhecimento **de empresa** da memória local do Claude (`~/.claude/.../memory/`) para a base versionada no repo, para viajar no git. Não espelha o que é pessoal/segredo. Não commita. | `/sincronizar-conhecimento`, "sincronizar conhecimento", "atualizar a base de conhecimento", "passar a memória pro Obsidian"; após sessão com aprendizado novo de empresa. ⚠️ compatibilidade abaixo. |
 
-> ⚠️ **Compatibilidade:** assume `_Sistema/Base de Conhecimento (Claude)/`, a **regra de espelhamento no `CLAUDE.md`** e uma skip-list específica do Gabriel (Gabriel/Gustavo/diretoria). Adaptar ao nosso vault na reorg.
+> ⚠️ **Compatibilidade:** assume `Sistema/Base de Conhecimento (Claude)/`, a **regra de espelhamento no `CLAUDE.md`** e uma skip-list específica do Gabriel (Gabriel/Gustavo/diretoria). Adaptar ao nosso vault na reorg.
 
 ## Como criar / editar uma skill
 - Crie a pasta `.claude/skills/<nome>/SKILL.md` com frontmatter `name` + `description`.

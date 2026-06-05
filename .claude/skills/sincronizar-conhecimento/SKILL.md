@@ -1,6 +1,6 @@
 ---
 name: sincronizar-conhecimento
-description: Espelha o conhecimento de EMPRESA da memória local do Claude (~/.claude/.../memory/) para a base versionada no repo (_Sistema/Base de Conhecimento (Claude)/), pra que viaje no git e deixe o vault inteligente pra qualquer pessoa que clona. Use quando o Tadeu pedir pra "sincronizar/transferir conhecimento", "atualizar a base de conhecimento", "passar a memória pro Obsidian", ou após uma sessão em que aprendeu fatos novos de empresa. Triggered by /sincronizar-conhecimento.
+description: Espelha o conhecimento de EMPRESA da memória local do Claude (~/.claude/.../memory/) para a base versionada no repo (Sistema/Base de Conhecimento (Claude)/), pra que viaje no git e deixe o vault inteligente pra qualquer pessoa que clona. Use quando o Tadeu pedir pra "sincronizar/transferir conhecimento", "atualizar a base de conhecimento", "passar a memória pro Obsidian", ou após uma sessão em que aprendeu fatos novos de empresa. Triggered by /sincronizar-conhecimento.
 ---
 
 # Sincronizar Conhecimento (memória local → repo)
@@ -8,7 +8,7 @@ description: Espelha o conhecimento de EMPRESA da memória local do Claude (~/.c
 ## Overview
 A inteligência do Claude mora em **dois lugares** e só um viaja no git:
 - **Memória local** `~/.claude/projects/<slug>/memory/` — fica na máquina de cada pessoa, NÃO vai pro repo.
-- **Base de conhecimento** `_Sistema/Base de Conhecimento (Claude)/` — **versionada no repo**, então qualquer pessoa que clona (hoje: diretoria — Tadeu + Léo) recebe.
+- **Base de conhecimento** `Sistema/Base de Conhecimento (Claude)/` — **versionada no repo**, então qualquer pessoa que clona (hoje: diretoria — Tadeu + Léo) recebe.
 
 Esta skill **espelha o que é conhecimento de EMPRESA** da memória local pra base versionada, pra que o repo fique cada vez mais inteligente e o nível de resposta seja o mesmo pra todo mundo. Roda em qualquer máquina (a do Tadeu ou a do Léo) — o que cada um aprende flui pro repo e, via `git pull`, chega no outro.
 
@@ -26,7 +26,7 @@ Esta skill **espelha o que é conhecimento de EMPRESA** da memória local pra ba
 ## Processo
 
 ### 1. Localizar as duas pastas
-- **Base (destino):** `_Sistema/Base de Conhecimento (Claude)/` na raiz do vault.
+- **Base (destino):** `Sistema/Base de Conhecimento (Claude)/` na raiz do vault.
 - **Memória (origem):** a pasta de memória do Claude desta máquina. É `~/.claude/projects/<slug>/memory/`, onde `<slug>` é o caminho absoluto do projeto com `/` virando `-` (ex.: projeto `/Users/gabrielbngomes/gabriel-gex` → `-Users-gabrielbngomes-gabriel-gex`). Liste `~/.claude/projects/` e ache a que casa com o vault atual. Leia o `MEMORY.md` dela (índice).
 
 ### 2. Diferenciar
