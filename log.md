@@ -3,6 +3,14 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-04 — INCIDENTE (Meta Ads: investimento incompleto desde 26/05)
+- Investigação read-only: `[[gerenciador_meta_consolidado_v2]]` **correta** (spend bate com a `ads_v2`);
+  a falha é a montante na bruta **`meta_ad_id`** — caiu de **~57 contas / ~20k ads / ~R$120–150k/dia**
+  para **3–12 contas / centenas de ads / ~R$1–4k/dia** em **26/05** (dias 02/06 e 05/06 ausentes).
+- **Causa raiz:** perda de acesso às contas de anúncio (token/permissão Meta) — camada AWS/Meta.
+- **Armadilha:** `refresh_gerenciador_meta_ads_v2` só recalcula 3 dias e congela o resto → gap vira permanente sem rebuild.
+- Registrado em `Incidentes/2026-06-04 - Meta Ads spend incompleto desde 26-05.md` (plano + SQL de rebuild pós-backfill).
+
 ## 2026-06-04 — EDIT (Reuniões: ata + cru da sessão com o CTO sobre o vault)
 - Arquivada a sessão Gabriel × Tadeu (04/06) que não tinha sido salva: transcript **cru** em
   `Sistema/_raw_files/reuniões/processado/` + **ata** estruturada em `Reuniões/` (resumo, decisões,
