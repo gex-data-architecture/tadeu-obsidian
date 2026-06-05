@@ -61,7 +61,17 @@ Analisados os 4 workflows da ingestão Meta (conta N8N Cloud, perfil **Gabriel G
 1. **Listagem de Contas** (12h) → Graph `…/656581916148820/adaccounts` → **UPSERT** em `facebook_reports_accounts_list` (nunca deleta).
 2. **Extração Normais – Today** (15 min), **3. Deletados – Today** (6h), **4. Deletados – Last 3D** → para cada conta da lista, Graph `act_{id}/insights` (`spend`) → fila RabbitMQ `meta_dash` → consumidor → `meta_ad_id`.
 
-**Causa raiz confirmada:** o token da credencial **`[Meta Ads] [Perfil | Gabriel Gomes]`** (perfil `656581916148820`) **perdeu acesso a ~50 das 57 contas** em ~26/05 — contas sem acesso não retornam insights → spend some. A lista `facebook_reports_accounts_list` segue com 57 porque é **UPSERT (não remove)**, mascarando o problema. Não é erro de query/paginação — é **permissão do token**.
+**Causa raiz confirmada:** o **perfil do Gabriel (`656581916148820`) foi bloqueado** em ~26/05. A ingestão é **duplicada por perfil** (Gabriel / Gustavo `122174054822897896` / Daniela `841019714372079`), mas as contas **nunca foram re-atribuídas**: das ~447 contas em `facebook_reports_accounts_list`, **411 estão sob o perfil do Gabriel** (34 Gustavo, 2 Daniela). A lista é **UPSERT (não remove)**, então segue "cheia" e mascara o buraco.
+
+**Prova quantificada (spend/contas por perfil, `meta_ad_id`):**
+| Período | Perfil | Contas | Spend |
+|---|---|--:|--:|
+| Pré 26/05 | **Gabriel `656…`** | 52 | **R$ 713.292** |
+| Pré 26/05 | Gustavo `122…` | 11 | R$ 16.662 |
+| Pós 26/05 | Gustavo `122…` | 12 | R$ 20.866 |
+| **Pós 26/05** | **Gabriel** | **0** | **R$ 0** |
+
+→ O perfil do Gabriel concentrava **~98% do investimento** e **zerou** após o bloqueio; a "redundância" Gustavo/Daniela não cobre. O **Lambda do Victor não é o culpado** (processa o que chega; chegou quase nada). Não é query/paginação — é **identidade/permissão (perfil bloqueado)**.
 
 **Achados adicionais:**
 - 🔒 **Token do Meta hardcoded** no node de paginação ("Define a URL", `.replace(...)`) dos fluxos exportados → **redatar antes de versionar** e tratar como exposto (rotacionar).
@@ -74,7 +84,7 @@ A `[[refresh_gerenciador_meta_ads_v2]]` **só recalcula os últimos 3 dias** a p
 - Só os **últimos 3 dias** se auto-corrigem.
 
 ## ✅ Plano de ação
-1. **Corrigir o acesso ao Meta** (raiz): renovar/reconectar o token (System User / BM) para as ~57 contas voltarem a fluir para a `meta_ad_id`. Validar via lambda `…meta_ad_id_rabbitmq` / produtor da fila.
+1. **Reatribuir as contas a uma identidade que funcione** (raiz): o perfil do Gabriel está **bloqueado** — renovar o token dele **não resolve**. Dar acesso das ~411 contas (ao menos as ~52 ativas) a um **System User token** no Business Manager (identidade única, estável, não-bloqueável), e rodar a **Listagem** dessa identidade para popular o `facebook_reports_accounts_list` com o novo `profile_id`. Validar via fila RabbitMQ + lambda do Victor.
 2. **Rebackfillar `meta_ad_id`** de **26/05 → hoje** (re-extrair o spend do Meta para o intervalo).
 3. **Rebuild do gold (uma vez), pós-backfill** — recomputar `gerenciador_meta_ads_v2` para o intervalo afetado (não só 3 dias) e rodar o consolidado. **DDL = DBA** (o MCP é read-only):
    ```sql
