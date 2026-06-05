@@ -121,4 +121,4 @@ A estrutura de dados da GEX está crescendo e o time quer garantir que a arquite
 - **Foco**: call técnica de laboratório para modelar uma **Gold (fato/dimensão)** junto com Diego/Gabriel; e (separada) deep-dive Obsidian × RAG/vetorial.
 
 ## Relacionados
-[[migracao-data_team-mapa]] · [[Regras de Exclusão]] · [[Conhecimento/Calls/_sobre]]
+[[migracao-data_team-mapa]] · [[Regras de Exclusão]] · [[Reuniões/_sobre]]

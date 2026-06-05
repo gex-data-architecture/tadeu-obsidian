@@ -23,10 +23,10 @@ re-derivada a cada pergunta.
 - **Wiki**: este vault (notas + páginas curadas).
 - **Schema**: [[CLAUDE]] — convenções e operações **Ingest / Query / Lint**.
 - **Diário**: [[log]] — registro append-only de toda mudança.
-- **Conhecimento curado**: pasta `Conhecimento/` ([[_sobre-esta-pasta]]) — **não é sobrescrita** pelos scripts.
+- **Conhecimento curado** mora na entidade dona (`Decisões/`, `Reuniões/`, `Fontes de Dados/`…) — **não é sobrescrito** pelos scripts.
 
 > ⚠️ As pastas `Tabelas/ Views/ Rotinas/ Eventos/` são **geradas** e sobrescritas nas regerações.
-> Conhecimento manual (dossiês, decisões, narrativas) vai em `Conhecimento/`.
+> Conhecimento manual (dossiês, decisões, narrativas) vai na entidade dona (`Decisões/`, dossiê junto da tabela).
 
 ## Como navegar
 - **Quem mexe numa tabela?** Abra a nota da tabela → seções *Quem escreve aqui* / *Quem lê daqui*,
@@ -78,7 +78,7 @@ Depois de instalar o Dataview (Settings → Community plugins), estas consultas 
 ### Maiores tabelas
 ```dataview
 TABLE categoria AS Categoria, linhas AS Linhas, tamanho_mb AS "Tam (MB)"
-FROM "DB_instituto_experience/Tabelas"
+FROM "Banco de Dados/MySQL/instituto_experience/Tabelas"
 SORT tamanho_mb DESC
 LIMIT 20
 ```
@@ -86,7 +86,7 @@ LIMIT 20
 ### Tabelas candidatas a limpeza
 ```dataview
 TABLE tamanho_mb AS "Tam (MB)", linhas AS Linhas
-FROM "DB_instituto_experience/Tabelas"
+FROM "Banco de Dados/MySQL/instituto_experience/Tabelas"
 WHERE contains(string(categoria), "backup") OR contains(string(categoria), "teste") OR linhas = 0
 SORT tamanho_mb DESC
 ```
@@ -94,7 +94,7 @@ SORT tamanho_mb DESC
 ### Tabelas sem PK
 ```dataview
 TABLE tamanho_mb AS "Tam (MB)", linhas AS Linhas
-FROM "DB_instituto_experience/Tabelas"
+FROM "Banco de Dados/MySQL/instituto_experience/Tabelas"
 WHERE tem_pk != "Sim"
 SORT tamanho_mb DESC
 ```
@@ -102,7 +102,7 @@ SORT tamanho_mb DESC
 ### Eventos e sua agenda
 ```dataview
 TABLE status AS Status, intervalo AS Intervalo, unidade AS Unidade, ultima_execucao AS "Última exec"
-FROM "DB_instituto_experience/Eventos"
+FROM "Banco de Dados/MySQL/instituto_experience/Eventos"
 SORT status ASC
 ```
 

@@ -13,7 +13,7 @@ criado_em: 2026-06-02
 ## Estado atual
 - **0 tabelas · 0 views · 0 procedures · 0 eventos** (banco recém-criado, ainda vazio).
 - Quando os primeiros objetos forem criados, este banco ganha as pastas geradas
-  `DB_data_team/Tabelas|Views|Rotinas|Eventos/` — no mesmo padrão do `DB_instituto_experience`.
+  `Banco de Dados/MySQL/data_team/{Tabelas,Views,Rotinas,Eventos}/` — mesmo padrão do `instituto_experience`.
 
 ## Como popular a documentação (quando houver objetos)
 1. Criar as tabelas/marts no banco `data_team` (fora daqui — o MCP é **read-only**).
@@ -32,4 +32,4 @@ criado_em: 2026-06-02
 ## Referências
 - Schema do vault: [[CLAUDE]]
 - Diário de mudanças: [[log]]
-- Banco fonte: [[DB_instituto_experience/00-Indice|instituto_experience]]
+- Banco fonte: [[Banco de Dados/MySQL/instituto_experience/00-Indice|instituto_experience]]

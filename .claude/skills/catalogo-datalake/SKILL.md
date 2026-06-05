@@ -2,7 +2,7 @@
 name: catalogo-datalake
 description: >-
   Cataloga o Data Lake da AWS (Glue Data Catalog + ETL Jobs + Crawlers + Step Functions +
-  regras EventBridge) e gera/atualiza a pasta `Data Lake/` no vault Obsidian — uma nota por
+  regras EventBridge) e gera/atualiza a pasta `Arquitetura/Data Lake/` no vault Obsidian — uma nota por
   tabela (bronze/silver/gold, develop/prod), por job de ETL, por crawler e por Step Function,
   mais o índice e o mapa de orquestração. Use SEMPRE que o usuário falar em "data lake",
   "catálogo de tabelas/jobs", "glue", "athena", "bronze/silver/gold", "camadas medallion",

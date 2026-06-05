@@ -3,6 +3,21 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-04 — REORG (estrutura de pastas alinhada ao CTO; ADR-001 executado)
+- Executada a reorganização via **git mv** (histórico preservado): **`_Sistema/`** (`_raw_files/{reuniões,documentos,notas}/{pendente,processado}`,
+  `Capturas (log de populate)/`, `Base de Conhecimento (Claude)/`, `_Templates/`, `Skills/`);
+  **`Banco de Dados/MySQL/{instituto_experience,data_team}`** (unifica os 2 `DB_*`);
+  **`Arquitetura/{Data Lake, Migração data_team}`**; **`Fontes de Dados/`**; **`Pessoas/Recrutamento/`**;
+  **`Parceiros/Teddy/Reuniões/`**; **`Reuniões/`**, **`Decisões/`**, **`Projetos/`**,
+  **`Operação/{Validações,Fluxos-N8N,Planilhas Manuais}`**.
+- **`Conhecimento/` dissolvida** (princípio "casa = dono"): call Teddy → Parceiros; ADRs → Decisões;
+  índice de calls → `Reuniões/_sobre`; `Dossies/_sobre` + `_sobre-esta-pasta` removidos (template de dossiê sobrevive).
+- `CLAUDE.md` reescrito (estrutura, convenção de link por caminho, **§8 regra de espelhamento**). Índices,
+  Dataview e wikilinks com caminho corrigidos. Skills do CTO adaptadas (dono Gabriel→**Tadeu**; paths já batem).
+- ⚠️ **Pendente (geradores GERADO ainda escrevem nos caminhos antigos):** `Inventario MSQL/{1,3,4}_*.py`
+  (→ `Banco de Dados/MySQL/<db>`) e `gerar_datalake.py` da skill `catalogo-datalake` (→ `Arquitetura/Data Lake/`).
+  Repathar antes de re-rodar, senão recriam `DB_*/` e `Data Lake/` na raiz. `references/` das skills (formats.md, routing.md) ainda pendentes do CTO.
+
 ## 2026-06-04 — EDIT (Sistema: instalada 3ª skill do CTO — sincronizar-conhecimento)
 - Instalada `.claude/skills/sincronizar-conhecimento/SKILL.md` (verbatim). Catálogo → **6 skills**.
 - ⚠️ Mesma ressalva: assume `_Sistema/Base de Conhecimento (Claude)/`, regra de espelhamento no `CLAUDE.md`

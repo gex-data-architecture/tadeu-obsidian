@@ -54,7 +54,7 @@ A falha #1 é tratar o dump como uma reunião. **Não é.**
 - **Existente primeiro:** sempre case contra a nota existente antes de propor uma nova (ex.: hub `Dados` já existe → atualiza, não cria).
 - **Pessoa externa → Parceiro, não Pessoa.** Alguém de fora (consultor, parceiro) vira/atualiza a nota em `Parceiros/<empresa>/`, referenciada por `[[wikilink]]`. **Não** crie uma pasta de Pessoa interna para externos. Crie o Parceiro se não existir.
 - **Camada operacional sob demanda:** Regras/Playbooks/Indicadores vão para `<área>/Operação/{Regras de Negócio,Playbooks,Indicadores}/`. A subpasta `Operação/` nasce sob demanda — **propor criar a nota operacional faz parte do plano**, nunca silenciosamente. Sem aprovação, registre no hub da Área.
-- **Gabriel é o dono do vault.** Não crie nota de Pessoa para ele. Em capturas solo ele é o autor implícito, não um "participante" a `[[linkar]]` — deixe `participantes` vazio se só houver ele.
+- **Tadeu é o dono do vault.** Não crie nota de Pessoa para ele. Em capturas solo ele é o autor implícito, não um "participante" a `[[linkar]]` — deixe `participantes` vazio se só houver ele.
 
 ## Common mistakes
 - **Criar nota de reunião em `Reuniões/`** em vez de Captura em `Capturas/`. É o erro mais comum — releia "Isto NÃO é o transcript-extractor".

@@ -26,58 +26,52 @@ informação nova nas páginas existentes.
 ## 3. Estrutura de pastas
 ```
 DataTeamDocs/
-  CLAUDE.md                 # este schema
-  log.md                    # diário append-only de mudanças
-  Templates/                # modelos de nota (transversal)
+  CLAUDE.md · log.md                         # schema + diário (raiz)
 
-  # --- GERADO (sobrescrito pelos scripts) — uma pasta por banco: DB_<schema> ---
-  DB_instituto_experience/
-    00-Indice.md            # índice DESTE banco (GERADO)
-    Tabelas/  Views/  Rotinas/  Eventos/   # 1 nota por objeto (não editar à mão)
-  DB_data_team/             # marts do time (vazio por enquanto)
-    00-Indice.md            # índice deste banco
-  Data Lake/                # GERADO da AWS Glue pela skill `catalogo-datalake`
-    00-Data-Lake.md         # índice do lake (databases, tabelas, jobs, SFN, crawlers)
-    Tabelas/<database>/     # 1 nota por tabela do Glue Catalog (bronze/silver/gold × dev/prod)
-    Jobs/                   # 1 nota por ETL Job do Glue (com script S3 + últimas execuções)
-    Orquestracao/           # 1 nota por Step Function e por crawler + 00-Orquestracao.md
-                            #   (Fluxo ASL, encadeamento via EventBridge, grafo mermaid,
-                            #    agendamentos cron/rate com status/horário/alvo)
+  _Sistema/                                  # MÁQUINA do vault ("_" agrupa no topo)
+    _raw_files/{reuniões,documentos,notas}/{pendente,processado}/   # camada BRONZE do conhecimento (cru, reprocessável)
+    Capturas (log de populate)/              # âncoras da skill populate
+    Base de Conhecimento (Claude)/           # espelho da memória do Claude (skill sincronizar-conhecimento)
+    _Templates/                              # modelos de nota
+    Skills/_catalogo.md                      # catálogo de skills (skill catalogo-skills)
 
-  # --- CURADO (NUNCA sobrescrito) — manual, humano + LLM ---
-  Conhecimento/             # saber sobre os dados
-    Dossies/  Calls/  Decisoes/
-  Fontes de Dados/          # plataformas (Clickbank, Buygoods, Cartpanda…) + onboarding
-    _template-fonte.md  _onboarding-nova-fonte.md
-    <Plataforma>/  ( <Plataforma>.md  API.md  Webhook.md  Mapeamento.md  exemplos/ )
-  Dashboards/               # dashboards do Looker Studio
-  Fluxos-N8N/               # automações n8n          (artefato de trabalho)
-  Epicos/                   # épicos de projeto
-  Incidentes/               # post-mortems
-  Pipelines/                # pipelines de dados ponta a ponta
-  Planilhas Manuais/        # fontes mantidas à mão (Sheets/Excel)
+  # --- GERADO (sobrescrito por scripts/skills) ---
+  Banco de Dados/MySQL/<db>/                 # instituto_experience, data_team (← MySQL)
+    00-Indice.md · Tabelas/ Views/ Rotinas/ Eventos/
+  Arquitetura/Data Lake/                     # ← AWS Glue (skill catalogo-datalake): Tabelas/ Jobs/ Orquestracao/ Crawlers/
+
+  # --- CURADO (nunca sobrescrito) — "casa = dono" ---
+  Arquitetura/                               # stack, medalhão, Migração data_team/
+  Fontes de Dados/<Plataforma>/              # Buygoods, Clickbank, Cartpanda… + onboarding
+  Dashboards/                                # Looker Studio
+  Pessoas/<Nome>/ (1on1/) · Pessoas/Recrutamento/   # time, negócio, candidatos
+  Parceiros/<empresa>/Reuniões/              # consultorias/fornecedores (ex.: Teddy)
+  Reuniões/                                  # reuniões internas do time
+  Decisões/                                  # ADRs
+  Projetos/ · Incidentes/
+  Operação/                                  # regras de negócio · indicadores · Validações · Fluxos-N8N · Planilhas
 ```
 
-> **Regra mestra:** existe SÓ uma divisão que importa — **GERADO** (as pastas-banco `DB_<schema>`
-> e a `Data Lake/`, sobrescritas a cada regeração pelos scripts/skills) vs. **CURADO** (todo o resto,
-> nunca tocado pelos scripts). A organização das pastas curadas é só navegação.
-> Fontes do GERADO: `DB_<schema>` ← MySQL (`Inventario MSQL/`); `Data Lake/` ← AWS Glue (skill `catalogo-datalake`).
+> **Regra mestra:** **GERADO** (sobrescrito por scripts/skills) vs **CURADO** (nunca tocado).
+> GERADO = `Banco de Dados/MySQL/<db>/{Tabelas,Views,Rotinas,Eventos}` (← MySQL, `Inventario MSQL/`) e
+> `Arquitetura/Data Lake/` (← AWS Glue, skill `catalogo-datalake`). CURADO = todo o resto.
+> Princípio de organização do CURADO: **"casa = dono"** — a nota mora na **entidade que a possui**
+> (pessoa, parceiro, projeto, banco, domínio), não num balde por tipo. Pasta só existe quando há conteúdo.
 
 ### 📂 Regra de organização por banco
-- Cada **banco** vira uma pasta no padrão **`DB_<schema>`** (`DB_instituto_experience`, `DB_data_team`),
-  contendo APENAS as notas **geradas** daquele banco + o seu próprio **`00-Indice.md`**.
-- O que é **transversal** — `Templates/`, `Conhecimento/`, pastas curadas, `CLAUDE.md`, `log.md` —
-  fica no **root** (conhecimento curado pode cruzar bancos).
-- Nas queries Dataview, o `FROM` usa o caminho com a pasta-banco: `FROM "DB_instituto_experience/Tabelas"`.
+- Cada banco relacional vira **`Banco de Dados/<engine>/<db>/`** (`Banco de Dados/MySQL/instituto_experience`,
+  `…/data_team`), com APENAS as notas **geradas** + o seu **`00-Indice.md`**. Mesma estrutura por banco (Postgres/futuros idem).
+- **`_Sistema/`** é a máquina (templates, raw files, skills, base de conhecimento). O conteúdo curado mora nas pastas por domínio/dono.
+- Dataview: `FROM "Banco de Dados/MySQL/instituto_experience/Tabelas"`.
 
-> **Padrão do índice:** cada `DB_<schema>/` tem um `00-Indice.md`. Como há vários com o mesmo nome,
-> **sempre linke com o caminho**: `[[DB_instituto_experience/00-Indice]]` (e não `[[00-Indice]]`, que fica ambíguo).
+> **Padrão do índice:** vários `00-Indice.md` → **linke com o caminho**:
+> `[[Banco de Dados/MySQL/instituto_experience/00-Indice]]` (não `[[00-Indice]]`, que fica ambíguo).
 
 ### ⚠️ Regra de ouro sobre regeneração
 As pastas **Tabelas / Views / Rotinas / Eventos** são **geradas** pelos scripts e
 **sobrescritas** numa regeração. **Não coloque conhecimento manual nelas** — ele se perde.
-Todo insight, narrativa, decisão e dossiê de negócio vai em **`Conhecimento/`** (e em MOCs),
-que os scripts não tocam. Linke das notas curadas para as notas geradas com `[[wikilinks]]`.
+Insight, narrativa, decisão e dossiê vão para a **entidade dona** (`Decisões/`, `Reuniões/`,
+`Fontes de Dados/`, dossiê junto da tabela). Linke das curadas para as geradas com `[[wikilinks]]`.
 
 ## 4. Convenções de nota
 - **Nome do arquivo = nome do objeto** (ex.: `Tabelas/cartpanda_physical.md`). Isso faz o
@@ -102,7 +96,7 @@ sequência abaixo na pasta `Inventario MSQL/` — ela relê o banco e regenera o
 2. `python 3_gerar_vault.py`      → regenera Tabelas/Views/Rotinas/Eventos.
 3. `python 4_gerar_indice.py`     → regenera o `00-Indice.md`.
    (Para mudanças pequenas, pode editar só a nota afetada — mas lembre que a próxima
-   regeração sobrescreve; insight de negócio vai em `Conhecimento/`, que não é tocado.)
+   regeração sobrescreve; insight de negócio vai na entidade dona — `Decisões/`, `Reuniões/`, etc.)
 4. Toda ingestão **deve** adicionar uma linha no `log.md`.
 5. Após DROP de tabelas: rode o **LINT de links quebrados** — notas curadas que linkam
    `[[<tabela_dropada>]]` viram links mortos e precisam de ajuste.
@@ -115,9 +109,9 @@ sequência abaixo na pasta `Inventario MSQL/` — ela relê o banco e regenera o
 ### LINT (saúde da wiki) — rode quando pedirem "lint" ou periodicamente
 - **Contradições**: números/afirmações divergentes entre notas curadas e notas geradas.
 - **Dados velhos**: `criada_em`/`ultima_execucao` muito antigos; eventos `DISABLED` ainda referenciados.
-- **Órfãos**: notas em `Conhecimento/` sem nenhum link de/para objetos.
+- **Órfãos**: notas curadas sem nenhum link de/para objetos.
 - **Links quebrados**: `[[...]]` apontando para objeto que não existe mais (pode ser tabela dropada).
-- Gere um relatório em `Conhecimento/Lint-YYYY-MM-DD.md` e registre no `log.md`.
+- Gere um relatório em `Operação/Lint-YYYY-MM-DD.md` e registre no `log.md`.
 
 ## 6. Fonte de verdade / cuidado
 - O **MCP `mysql` é read-only**. Nunca proponha escrita no banco a partir daqui.
@@ -140,3 +134,11 @@ sequência abaixo na pasta `Inventario MSQL/` — ela relê o banco e regenera o
 > **Execuções de rotinas/eventos:** o `performance_schema` **está acessível** para
 > `events_statements_summary_by_program` — daí saem as execuções de procedures/functions/events
 > (`program_stats.json`). Lembre que esses contadores **zeram a cada restart** do MySQL.
+
+## 8. Memória do Claude → Base de Conhecimento (regra de espelhamento)
+A inteligência do Claude mora em dois lugares: a **memória local** (`~/.claude/.../memory/`, **não** versionada)
+e a **`_Sistema/Base de Conhecimento (Claude)/`** (versionada, viaja no git). **Ao salvar uma memória de
+conhecimento de EMPRESA** (banco, métricas, processos, ferramentas, decisões), grave-a **também** na Base de
+Conhecimento, para quem clona o repo herdar. **Não espelhe** conteúdo pessoal/perfil de indivíduo nem
+segredos/credenciais — esses ficam só na memória local. A skill **`sincronizar-conhecimento`** é a rede de
+segurança que reconcilia tudo. Dono do vault: **Tadeu**.

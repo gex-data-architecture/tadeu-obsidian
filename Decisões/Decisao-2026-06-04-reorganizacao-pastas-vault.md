@@ -2,7 +2,7 @@
 tipo: decisao
 tags: [decisao, adr, conhecimento, vault, organizacao]
 numero: ADR-001
-status: proposto
+status: aceito
 data: 2026-06-04
 autores: [Tadeu]
 supera: null
@@ -11,9 +11,8 @@ superado_por: null
 # ADR-001 — Reorganização da arquitetura de pastas do vault
 
 > [!info] Status
-> **`proposto`** · 2026-06-04 · Tadeu
+> **`aceito`** · 2026-06-04 · Tadeu — **executado** (migração feita com `git mv`).
 > Origem: call com o CTO (Gabriel) em 04/06 sobre estrutura/governança do Obsidian.
-> **Nada foi migrado** — esta nota é a proposta para revisão/ajuste antes de executar.
 
 ## Contexto
 O vault do time de dados cresceu com pastas soltas na raiz e **duas raízes de banco**
@@ -141,4 +140,4 @@ Revisar se: a árvore criar atrito de navegação; entrar um novo banco (Postgre
 
 ## Referências
 - Call 04/06 com o CTO (Gabriel) · [[2026-06-03 - Alinhamento Teddy (consultoria de dados)]] (decisão de arquitetura relacionada)
-- [[Sistema/Skills/_catalogo]] · [[migracao-data_team-mapa]]
+- [[_Sistema/Skills/_catalogo]] · [[migracao-data_team-mapa]]

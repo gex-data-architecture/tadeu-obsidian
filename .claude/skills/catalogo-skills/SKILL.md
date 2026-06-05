@@ -1,7 +1,7 @@
 ---
 name: catalogo-skills
 description: >-
-  Mantém o catálogo de skills do vault em `Sistema/Skills/_catalogo.md` — varre
+  Mantém o catálogo de skills do vault em `_Sistema/Skills/_catalogo.md` — varre
   `.claude/skills/*/SKILL.md`, lê o `name`/`description` de cada uma e gera uma tabela
   única com "o que faz" e "quando usar". Use SEMPRE que o usuário falar em "catálogo de
   skills", "quais skills eu tenho", "listar/atualizar as skills", "force update do catálogo",
@@ -33,13 +33,13 @@ humano (e o próprio Cloud) consultarem rápido.
    - `Ingestão de conhecimento` (ex.: transcrição de call, popular documento, sincronizar memória)
    - `Onboarding de fontes`
    - `Análise`
-4. **Escrever** `Sistema/Skills/_catalogo.md` (sobrescrever — é GERADO) no formato abaixo.
+4. **Escrever** `_Sistema/Skills/_catalogo.md` (sobrescrever — é GERADO) no formato abaixo.
 5. Acrescentar uma linha no topo de `log.md`: `## <data> — EDIT (catálogo de skills atualizado: N skills)`.
 
 > Não invente skills. Liste apenas o que existe em `.claude/skills/`. Se uma `description`
 > estiver vazia/ruim, sinalize "⚠️ descrição a melhorar" em vez de adivinhar.
 
-## Formato do catálogo (`Sistema/Skills/_catalogo.md`)
+## Formato do catálogo (`_Sistema/Skills/_catalogo.md`)
 ```markdown
 ---
 tipo: indice
