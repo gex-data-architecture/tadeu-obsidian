@@ -3,6 +3,17 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-05 — EDIT (Reuniões: ata da sessão com o Davi)
+- Registrada a sessão Davi × Tadeu (05/06, 13:45–14:05 UTC) em `Reuniões/` — **sem transcript bruto** (só o
+  resumo do calendário; não há item em `_raw_files`). Temas: migração `instituto_experience` → **Data Team**
+  (de-para + `tb_gold_clickbank`/`tb_gold_buygoods`), **skill `onboard-gateway` agnóstica**, **MCP**, **hooks do
+  Claude Code**, e **qualidade** (mediana > média; padronizar eventos SMS/e-mail/call center).
+- 7 action items abertos; reforça a prioridade do `onboard-gateway` já apontada pelo Gabriel.
+
+## 2026-06-05 — TOOLING (obsidian-cli instalado)
+- `Yakitrak/obsidian-cli` (renomeado p/ **notesmd-cli v0.3.6**) — binário oficial no PATH (npm bin), vault
+  `DataTeamDocs` registrado como default. Action items da call do Gabriel (superpowers + obsidian-cli) fechados.
+
 ## 2026-06-04 — INCIDENTE (Meta Ads) — causa raiz CONFIRMADA via fluxos N8N
 - Analisados os 4 workflows N8N da ingestão Meta (perfil Gabriel Gomes). **Confirmado:** token da credencial
   `[Meta Ads] [Perfil | Gabriel Gomes]` (perfil 656581916148820) perdeu acesso a ~50 das 57 contas em ~26/05.
