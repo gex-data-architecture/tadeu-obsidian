@@ -33,7 +33,7 @@ notas. Tabela/job que sumiu na AWS some do vault na próxima geração.
   jobs/crawlers/SFN, não liga/desliga agendamentos nem altera o catálogo ou as regras — só descreve.
 - No S3 ela só **lê o arquivo do script** do job; **não toca nos dados** (não baixa
   parquet, não move, não apaga objetos) e nunca escreve no bucket.
-- O único efeito colateral é **escrever markdown** na pasta `Data Lake/` do vault.
+- O único efeito colateral é **escrever markdown** na pasta `Arquitetura/Data Lake/` do vault.
 
 ## Pré-requisitos
 - `boto3` instalado e AWS CLI configurado.
@@ -83,7 +83,7 @@ O script (`scripts/gerar_datalake.py`):
 
 ## Estrutura gerada
 ```
-Data Lake/
+Arquitetura/Data Lake/
 ├── 00-Data-Lake.md                  (índice — gerado)
 ├── Tabelas/
 │   └── <database>/<tabela>.md        (1 por tabela do Glue Catalog)
@@ -95,17 +95,18 @@ Data Lake/
     └── <crawler>.md                  (1 por crawler do Glue)
 ```
 Tudo aqui é **GERADO** (sobrescrito a cada rodada). Conhecimento curado sobre o lake
-(decisões, contexto de negócio, runbooks) vai em `Conhecimento/`, nunca dentro de `Data Lake/`.
+(decisões, contexto de negócio, runbooks) vai na **entidade dona** ("casa = dono") —
+ex.: `Arquitetura/`, `Incidentes/`, `Parceiros/` —, nunca dentro de `Arquitetura/Data Lake/`.
 
 ## Convenções do lake (BHG) — para ler as notas
 - **Medallion**: `landing → bronze → silver → gold → MySQL`. Fluxo refletido nos nomes
   dos jobs (`landing-to-bronze-*`, `bronze-to-silver-*`, `silver-to-gold-*`, `*-to-mysql`).
 - **Ambientes paralelos** `develop` e `prod`: cada camada/job costuma ter as duas versões.
 - O lake **alimenta o `instituto_experience`** (MySQL): os jobs `*-to-mysql` escrevem as
-  tabelas-fonte que o vault `DB_instituto_experience` documenta. É o elo entre os dois mundos.
+  tabelas-fonte que `Banco de Dados/MySQL/instituto_experience` documenta. É o elo entre os dois mundos.
 - Tabelas silver/gold normalmente são **parquet particionado** (ex.: por `dt_proc`).
 
 ## Após gerar
 - Acrescente uma linha no `log.md` (append-only) registrando a sincronização.
 - Se algum job `*-to-mysql` aponta para uma tabela do `instituto_experience`, vale criar
-  o `[[wikilink]]` curado ligando os dois catálogos (feito à mão, em `Conhecimento/`).
+  o `[[wikilink]]` curado ligando os dois catálogos (feito à mão, na entidade dona).

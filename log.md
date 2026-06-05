@@ -3,6 +3,16 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-05 — FIX (repath dos geradores GERADO p/ nova estrutura ADR-001)
+- Geradores que escreviam nos caminhos antigos foram repathados p/ a estrutura pós-reorg:
+  - `Inventario MSQL/3_gerar_vault.py` e `4_gerar_indice.py` (OneDrive, fora do repo):
+    `DB_instituto_experience` → `Banco de Dados/MySQL/instituto_experience`; `Templates/` → `Sistema/_Templates`;
+    Dataview `FROM "DB_instituto_experience/…"` → `FROM "Banco de Dados/MySQL/instituto_experience/…"`;
+    textos da antiga pasta `Conhecimento/` → "casa = dono" (entidade dona).
+  - skill `catalogo-datalake/gerar_datalake.py` (versionado): `Data Lake/` → `Arquitetura/Data Lake/`;
+    SKILL.md alinhada (estrutura gerada, refs a `Conhecimento/` e `DB_instituto_experience`).
+- Validado: `py_compile` OK nos 3 scripts; os 4 destinos resolvem p/ pastas já existentes (sem órfãs).
+
 ## 2026-06-05 — EDIT (Reuniões: ata da sessão com o Davi)
 - Registrada a sessão Davi × Tadeu (05/06, 13:45–14:05 UTC) em `Reuniões/` — **sem transcript bruto** (só o
   resumo do calendário; não há item em `_raw_files`). Temas: migração `instituto_experience` → **Data Team**

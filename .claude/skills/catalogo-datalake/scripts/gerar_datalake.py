@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 gerar_datalake.py — Cataloga o Data Lake da AWS (Glue Data Catalog + ETL Jobs) e
-gera a pasta `Data Lake/` no vault Obsidian. FONTE DA VERDADE = a própria AWS.
+gera a pasta `Arquitetura/Data Lake/` no vault Obsidian. FONTE DA VERDADE = a própria AWS.
 
 SOMENTE LEITURA na AWS: usa apenas glue.get_databases / get_tables / get_jobs.
 Nunca cria/edita/dropa nada na AWS — só escreve markdown local no vault.
@@ -17,7 +17,7 @@ import json
 import boto3
 
 VAULT  = r'C:\Users\tadeu\DataTeamDocs'
-ROOT   = os.path.join(VAULT, 'Data Lake')
+ROOT   = os.path.join(VAULT, 'Arquitetura', 'Data Lake')  # pós-reorg ADR-001
 PROFILE = os.environ.get('AWS_PROFILE', 'buygoods')
 REGION  = os.environ.get('AWS_REGION', 'us-east-1')
 
