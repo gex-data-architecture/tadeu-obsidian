@@ -50,7 +50,7 @@ reorganizar pastas → construir skill de **onboarding de gateway** → testar r
 | Ação | Responsável | Status |
 |---|---|---|
 | **superpowers** (plugin Claude Code) | Tadeu | ✅ instalado (v5.1.0, user) — reiniciar sessão p/ carregar |
-| **obsidian-cli** — confirmar qual (npm `obsidian-cli` é não-verificado; o do Yakitrak é Go) | Tadeu / Davi | ⏳ a confirmar |
+| **obsidian-cli** (Yakitrak → renomeado p/ `notesmd-cli` v0.3.6, binário oficial) | Tadeu | ✅ instalado (PATH npm; vault `DataTeamDocs` registrado como default) |
 | Instalar as 3 skills (transcript-extractor, populate, sincronizar-conhecimento) | Tadeu | ✅ feito |
 | Reorganizar a arquitetura de pastas | Tadeu | ✅ feito (ADR-001) |
 | Construir skill **`onboard-gateway`** (onboarding de fontes) | Tadeu | ⏳ a fazer |
@@ -60,7 +60,7 @@ reorganizar pastas → construir skill de **onboarding de gateway** → testar r
 | Gravar todas as reuniões (disciplina) | Tadeu | 🔁 contínuo |
 
 ## ⚠️ Pontos em aberto / riscos
-- Plugins externos (superpowers/obsidian-cli) dependem do Davi — não instalados.
+- ~~Plugins externos (superpowers/obsidian-cli) dependem do Davi — não instalados.~~ ✅ ambos instalados em 05/06 (superpowers v5.1.0; notesmd-cli/obsidian-cli v0.3.6).
 - Skills do CTO assumiam a estrutura dele; adaptadas ao nosso vault, mas faltam os `references/`.
 - Geradores GERADO (`Inventario MSQL/*.py`, `gerar_datalake.py`) ainda apontam para caminhos antigos.
 
