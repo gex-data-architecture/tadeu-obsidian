@@ -56,6 +56,18 @@ A `[[gerenciador_meta_consolidado_v2]]` está **correta** — o problema é na o
 
 > A correção do token está na camada **AWS/Meta** (lambda + produtor da fila / extrator do Meta) — fora do alcance do MCP MySQL (read-only).
 
+## ✅ Confirmação pelos fluxos N8N (04/06)
+Analisados os 4 workflows da ingestão Meta (conta N8N Cloud, perfil **Gabriel Gomes**):
+1. **Listagem de Contas** (12h) → Graph `…/656581916148820/adaccounts` → **UPSERT** em `facebook_reports_accounts_list` (nunca deleta).
+2. **Extração Normais – Today** (15 min), **3. Deletados – Today** (6h), **4. Deletados – Last 3D** → para cada conta da lista, Graph `act_{id}/insights` (`spend`) → fila RabbitMQ `meta_dash` → consumidor → `meta_ad_id`.
+
+**Causa raiz confirmada:** o token da credencial **`[Meta Ads] [Perfil | Gabriel Gomes]`** (perfil `656581916148820`) **perdeu acesso a ~50 das 57 contas** em ~26/05 — contas sem acesso não retornam insights → spend some. A lista `facebook_reports_accounts_list` segue com 57 porque é **UPSERT (não remove)**, mascarando o problema. Não é erro de query/paginação — é **permissão do token**.
+
+**Achados adicionais:**
+- 🔒 **Token do Meta hardcoded** no node de paginação ("Define a URL", `.replace(...)`) dos fluxos exportados → **redatar antes de versionar** e tratar como exposto (rotacionar).
+- Token é de **perfil pessoal** (frágil) → migrar para **System User token** (BM, long-lived).
+- Anúncios "Normais" só têm pull de `today` (sem "Normais – Last 3D"); com o freeze de 3 dias, gaps viram permanentes.
+
 ## ⚠️ Armadilha de design (atrapalha o conserto)
 A `[[refresh_gerenciador_meta_ads_v2]]` **só recalcula os últimos 3 dias** a partir da `meta_ad_id`; **tudo mais antigo que 3 dias é congelado** (copiado da versão anterior). Logo:
 - Mesmo após corrigir o token e **rebackfillar** a `meta_ad_id`, a procedure **não recupera sozinha** os dias de 26/05 até ~3 dias atrás — ficam travados errados.

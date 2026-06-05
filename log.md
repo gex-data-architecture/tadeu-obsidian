@@ -3,6 +3,13 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-04 — INCIDENTE (Meta Ads) — causa raiz CONFIRMADA via fluxos N8N
+- Analisados os 4 workflows N8N da ingestão Meta (perfil Gabriel Gomes). **Confirmado:** token da credencial
+  `[Meta Ads] [Perfil | Gabriel Gomes]` (perfil 656581916148820) perdeu acesso a ~50 das 57 contas em ~26/05.
+  `facebook_reports_accounts_list` é UPSERT (não remove) → mascara o problema. Não é query/paginação — é permissão do token.
+- 🔒 Token do Meta **hardcoded** nos JSONs exportados → não versionar como está; rotacionar. Token de perfil pessoal (frágil) → migrar p/ System User.
+- Confirmação anexada ao `Incidentes/2026-06-04 - Meta Ads spend incompleto desde 26-05.md`.
+
 ## 2026-06-04 — INCIDENTE (Meta Ads: investimento incompleto desde 26/05)
 - Investigação read-only: `[[gerenciador_meta_consolidado_v2]]` **correta** (spend bate com a `ads_v2`);
   a falha é a montante na bruta **`meta_ad_id`** — caiu de **~57 contas / ~20k ads / ~R$120–150k/dia**
