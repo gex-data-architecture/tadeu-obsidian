@@ -32,5 +32,15 @@ tags: [dashboard]
 - Usa custos diários ([[custos_trafego_gestores_diaria]], [[custos_conta_agencia_diaria]], [[custos_gerais_diaria]]) — checar dependência.
 - Fuso / moeda / filtros padrão: _(a verificar)_
 
+## 🔗 Planilhas relacionadas
+> Planilhas que alimentam ou compõem este dashboard. Para cada uma: o que contém, quem mantém,
+> frequência de atualização e qual tabela/parte do dash ela alimenta. Fonte: `Operação/Planilhas/`.
+- _(⚠️ a preencher)_
+
+## 🔁 Fluxos N8N relacionados
+> Automações n8n ligadas a este dashboard (ingestão, sync, alertas). Para cada fluxo: gatilho,
+> o que faz e o que escreve (tabela destino). Fonte: `Operação/N8N/`.
+- _(⚠️ a preencher)_
+
 ## Relacionados
 [[Dashboards/_sobre]] · [[migracao-data_team-mapa]]

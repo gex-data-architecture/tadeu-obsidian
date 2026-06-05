@@ -49,7 +49,7 @@ DataTeamDocs/
   Reuniões/                                  # reuniões internas do time
   Decisões/                                  # ADRs
   Projetos/ · Incidentes/
-  Operação/                                  # regras de negócio · indicadores · Validações · Fluxos-N8N · Planilhas
+  Operação/                                  # regras de negócio · indicadores · Validações · N8N · Planilhas
 ```
 
 > **Regra mestra:** **GERADO** (sobrescrito por scripts/skills) vs **CURADO** (nunca tocado).

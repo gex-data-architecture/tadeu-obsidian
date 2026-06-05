@@ -2,7 +2,7 @@
 tipo: moc
 tags: [moc, planilha-manual]
 ---
-# Planilhas Manuais
+# Planilhas
 
 > Registro das **planilhas mantidas à mão** (Google Sheets / Excel) que alimentam
 > ou complementam os dados — fontes que NÃO vêm do banco automaticamente.

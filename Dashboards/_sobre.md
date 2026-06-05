@@ -14,6 +14,8 @@ tags: [moc, dashboards]
 - **Atualização**: qual evento/procedure gera os dados e em que agenda.
 - **Páginas/abas** e principais métricas.
 - **Observações / pegadinhas** (filtros padrão, fuso, moeda).
+- **Planilhas relacionadas**: planilhas (Sheets/Excel) que alimentam o dash → `Operação/Planilhas/`.
+- **Fluxos N8N relacionados**: automações n8n que alimentam o dash → `Operação/N8N/`.
 
 ## Convenção
 - Uma nota por dashboard. Nome do arquivo = nome do dashboard.
