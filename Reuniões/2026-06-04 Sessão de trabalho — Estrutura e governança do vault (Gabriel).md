@@ -49,7 +49,8 @@ reorganizar pastas → construir skill de **onboarding de gateway** → testar r
 ## 📌 Action items
 | Ação | Responsável | Status |
 |---|---|---|
-| Instalar plugins **superpowers** + **obsidian-cli** (com o Davi) | Tadeu / Davi | ⏳ pendente (externo) |
+| **superpowers** (plugin Claude Code) | Tadeu | ✅ instalado (v5.1.0, user) — reiniciar sessão p/ carregar |
+| **obsidian-cli** — confirmar qual (npm `obsidian-cli` é não-verificado; o do Yakitrak é Go) | Tadeu / Davi | ⏳ a confirmar |
 | Instalar as 3 skills (transcript-extractor, populate, sincronizar-conhecimento) | Tadeu | ✅ feito |
 | Reorganizar a arquitetura de pastas | Tadeu | ✅ feito (ADR-001) |
 | Construir skill **`onboard-gateway`** (onboarding de fontes) | Tadeu | ⏳ a fazer |
