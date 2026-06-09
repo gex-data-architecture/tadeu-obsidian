@@ -35,12 +35,16 @@ tags: [dashboard]
 ## 🔗 Planilhas relacionadas
 > Planilhas que alimentam ou compõem este dashboard. Para cada uma: o que contém, quem mantém,
 > frequência de atualização e qual tabela/parte do dash ela alimenta. Fonte: `Operação/Planilhas/`.
-- _(⚠️ a preencher)_
+- [[Custos de Tráfego Pago]] → custos de tráfego (gestores/contas) → [[custos_trafego_gestores]] / [[custos_conta_agencia]] / [[custos_gerais]]
+- [[Squads e Copywriters]] → dimensões → [[dim_squad]] / [[dim_copywriter]]
+- [[ClickBank - Tráfego Interno]] → afiliados de tráfego interno → [[clickbank_internal_affiliates]]
 
 ## 🔁 Fluxos N8N relacionados
 > Automações n8n ligadas a este dashboard (ingestão, sync, alertas). Para cada fluxo: gatilho,
 > o que faz e o que escreve (tabela destino). Fonte: `Operação/N8N/`.
-- _(⚠️ a preencher)_
+- [[Custos Tráfego Gestores]] — schedule 4h/1h → escreve custos (`custos_*`)
+- [[Dimensões Copys e Squads]] — webhook → escreve `dim_squad` / `dim_copywriter`
+- [[ClickBank - Identificador Tráfego Interno]] — schedule 12h → escreve `clickbank_internal_affiliates`
 
 ## Relacionados
 [[Dashboards/_sobre]] · [[migracao-data_team-mapa]]

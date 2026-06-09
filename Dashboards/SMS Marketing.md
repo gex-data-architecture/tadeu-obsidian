@@ -36,12 +36,14 @@ tags: [dashboard]
 ## 🔗 Planilhas relacionadas
 > Planilhas que alimentam ou compõem este dashboard. Para cada uma: o que contém, quem mantém,
 > frequência de atualização e qual tabela/parte do dash ela alimenta. Fonte: `Operação/Planilhas/`.
-- _(⚠️ a preencher)_
+- [[Metas de Monetização e Recuperação]] → metas mensais SMS/E-mail/Whats → [[gross_recovery_target]]
+- [[Operação/Planilhas/Custos SMS, E-mail e Whats|Custos SMS, E-mail e Whats (planilha)]] → custos diários por canal → [[sms_costs]]
 
 ## 🔁 Fluxos N8N relacionados
 > Automações n8n ligadas a este dashboard (ingestão, sync, alertas). Para cada fluxo: gatilho,
 > o que faz e o que escreve (tabela destino). Fonte: `Operação/N8N/`.
-- _(⚠️ a preencher)_
+- [[SMS e E-mail - Metas]] — webhook → escreve `gross_recovery_target`
+- [[Operação/N8N/Custos SMS, E-mail e Whats|Custos SMS, E-mail e Whats (fluxo)]] — webhook → escreve `sms_costs`
 
 ## Relacionados
 [[Dashboards/_sobre]] · [[migracao-data_team-mapa]]

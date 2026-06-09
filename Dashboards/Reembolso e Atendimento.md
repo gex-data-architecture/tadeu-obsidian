@@ -43,12 +43,12 @@ tags: [dashboard]
 ## 🔗 Planilhas relacionadas
 > Planilhas que alimentam ou compõem este dashboard. Para cada uma: o que contém, quem mantém,
 > frequência de atualização e qual tabela/parte do dash ela alimenta. Fonte: `Operação/Planilhas/`.
-- _(⚠️ a preencher)_
+- Nenhuma planilha manual (a origem é o banco do Chatwoot).
 
 ## 🔁 Fluxos N8N relacionados
 > Automações n8n ligadas a este dashboard (ingestão, sync, alertas). Para cada fluxo: gatilho,
 > o que faz e o que escreve (tabela destino). Fonte: `Operação/N8N/`.
-- _(⚠️ a preencher)_
+- [[Chatwoot - Postgres-MySQL (Reembolso)]] — schedule 15 min → sync incremental Chatwoot (Postgres) → escreve `cw_*_mat` ([[cw_conversations_mat]], [[cw_messages_mat]]…)
 
 ## Relacionados
 [[Dashboards/_sobre]] · [[migracao-data_team-mapa]]

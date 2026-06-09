@@ -3,6 +3,16 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-09 — INGEST (Operação: 7 fluxos N8N + 6 planilhas + linkagem com dashboards)
+- 1ª passada da pasta "Operação Obsidian" (OneDrive): criadas **7 notas de fluxo** em `Operação/N8N/`
+  (psyche: Chatwoot/Reembolso, Custos Tráfego, Dimensões Copys/Squads, SMS-Metas, Custos SMS;
+  pneuma: BuyGoods Ofertas, ClickBank Tráfego Interno) e **6 notas de planilha** em `Operação/Planilhas/`,
+  com gatilho, o que lê/escreve (tabelas) e credenciais por nome.
+- **Linkados aos dashboards** (seções 🔗 Planilhas e 🔁 Fluxos): Vendas Internas, SMS Marketing,
+  E-mail Marketing, Reembolso e Atendimento, Afiliados. Auditoria de Leads: sem fluxo/planilha neste lote.
+- `_sobre.md` de N8N e Planilhas viraram índices. Segurança: scan dos JSONs **sem segredos**; JSONs
+  ficam no OneDrive (não versionados). **Conteúdo das planilhas (abas/colunas) = 2ª passada via MCP Sheets.**
+
 ## 2026-06-09 — SKILL + EDIT (eventos separados em ENABLE/DISABLE)
 - Nova skill `organizar-eventos`: lê `information_schema.EVENTS` (read-only) e separa as notas em
   `Eventos/ENABLE` (ativos) e `Eventos/DISABLE` (inativos). Rodada agora: **5 ENABLE / 26 DISABLE**.
