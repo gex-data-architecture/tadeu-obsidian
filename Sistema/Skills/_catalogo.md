@@ -1,26 +1,27 @@
 ---
 tipo: indice
 gerado_por: skill/catalogo-skills
-atualizado_em: 2026-06-04
+atualizado_em: 2026-06-09
 tags: [sistema, skills, moc]
 ---
 # 🧩 Catálogo de Skills
 
 > GERADO por `catalogo-skills`. Não editar à mão — rode a skill de novo.
-> As skills ficam em `.claude/skills/<nome>/SKILL.md`. Total atual: **6**.
+> As skills ficam em `.claude/skills/<nome>/SKILL.md`. Total atual: **7**.
 
 ## Por categoria
 
 ### Catalogação / Documentação
 | Skill | O que faz | Quando usar (gatilhos) |
 |---|---|---|
-| `catalogo-datalake` | Cataloga o Data Lake da AWS (Glue + ETL Jobs + Crawlers + Step Functions + EventBridge) e gera/atualiza a pasta `Data Lake/` — 1 nota por tabela/job/crawler/SFN + índice + mapa de orquestração. Só leitura na AWS. | "data lake", "glue", "athena", "bronze/silver/gold", "documentar os jobs", "orquestração", "crawlers", "agendamentos", "atualizar o data lake". |
+| `catalogo-datalake` | Cataloga o Data Lake da AWS (Glue + ETL Jobs + Crawlers + Step Functions + EventBridge) e gera/atualiza a pasta `Arquitetura/Data Lake/` — 1 nota por tabela/job/crawler/SFN + índice + mapa de orquestração. Só leitura na AWS. | "data lake", "glue", "athena", "bronze/silver/gold", "documentar os jobs", "orquestração", "crawlers", "agendamentos", "atualizar o data lake". |
 | `catalogo-skills` | Varre `.claude/skills/` e gera este catálogo (o que faz / quando usar por skill). | "catálogo de skills", "quais skills eu tenho", "atualizar catálogo"; **após criar/editar uma skill**. |
 
 ### Manutenção / Qualidade
 | Skill | O que faz | Quando usar (gatilhos) |
 |---|---|---|
 | `limpeza-banco` | Metodologia para caçar tabelas/views excluíveis com segurança (read-only): investiga, gera scripts `.sql` de quarentena/DROP e documenta — nunca executa DDL. | "limpeza de banco", "tabelas/views não usadas", "o que posso apagar", "tabela vazia", "view quebrada". |
+| `organizar-eventos` | Separa as notas de eventos do MySQL em `Eventos/ENABLE` (ativos) e `Eventos/DISABLE` (inativos), lendo o STATUS real em `information_schema.EVENTS`. Read-only no banco; só move `.md`. | "separar/organizar eventos", "eventos ativos/inativos", "ENABLE/DISABLE", "quais events estão rodando"; após ligar/desligar um event no banco. |
 
 ### Ingestão de conhecimento
 | Skill | O que faz | Quando usar (gatilhos) |
@@ -48,6 +49,5 @@ tags: [sistema, skills, moc]
 
 ## 🔜 Skills planejadas / pendentes
 > Ainda **não instaladas**.
-- `onboard-gateway` — onboarding padronizado de uma nova fonte/gateway (amostra → de-para → bronze/silver/gold). (A construir.)
-- **`references/` pendentes:** `transcript-extractor/references/formats.md` e `populate/references/routing.md` (citados pelas skills, ainda não recebidos).
+- `onboard-gateway` — onboarding padronizado de uma nova fonte/gateway (amostra → de-para → bronze/silver/gold). (A construir — prioridade nº 1 das calls Gabriel + Davi.)
 - **`references/` pendentes:** `transcript-extractor/references/formats.md` e `populate/references/routing.md` (citados pelas skills, ainda não recebidos).

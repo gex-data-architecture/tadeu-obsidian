@@ -3,6 +3,13 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-09 — SKILL + EDIT (eventos separados em ENABLE/DISABLE)
+- Nova skill `organizar-eventos`: lê `information_schema.EVENTS` (read-only) e separa as notas em
+  `Eventos/ENABLE` (ativos) e `Eventos/DISABLE` (inativos). Rodada agora: **5 ENABLE / 26 DISABLE**.
+- Gerador `3_gerar_vault.py` patchado p/ escrever direto nas subpastas (makedirs + escrita por STATUS +
+  limpeza de órfãos por pasta-folha) → o split se mantém nas regerações.
+- Catálogo de skills atualizado (7 skills).
+
 ## 2026-06-09 — QUERY (validação dashboard_gold_buygoods × tb_gex_gold_buygoods)
 - Reconciliação read-only por dia (27/05→08/06) das duas tabelas MySQL em `instituto_experience`.
   **Idênticas** em todas as medidas conferidas (linhas, tx distintos, quantity, total_price BRL/USD,
