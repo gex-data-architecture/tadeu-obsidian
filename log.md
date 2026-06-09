@@ -3,6 +3,12 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-09 — QUERY (validação dashboard_gold_buygoods × tb_gex_gold_buygoods)
+- Reconciliação read-only por dia (27/05→08/06) das duas tabelas MySQL em `instituto_experience`.
+  **Idênticas** em todas as medidas conferidas (linhas, tx distintos, quantity, total_price BRL/USD,
+  total_refund BRL/USD) — diferença zero. Total: 89.530 tx · 903.193 qtd · R$ 182,78 mi · US$ 35,99 mi.
+- Nota: `Operação/Validações/validacao-gold-buygoods-mysql-2026-06-09.md`.
+
 ## 2026-06-05 — FIX (repath dos geradores GERADO p/ nova estrutura ADR-001)
 - Geradores que escreviam nos caminhos antigos foram repathados p/ a estrutura pós-reorg:
   - `Inventario MSQL/3_gerar_vault.py` e `4_gerar_indice.py` (OneDrive, fora do repo):
