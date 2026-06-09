@@ -37,14 +37,28 @@ Como `dashboard = tb_gex` em 100% dos casos, mostra-se um valor por métrica (va
 
 > Reembolso (USD) no total também bate: **2.973.468,89** nas duas tabelas.
 
+## Cobertura completa — todas as 45 colunas numéricas (totais do período)
+Somadas todas as colunas numéricas das duas tabelas no período: **`diff = 0` em 45/45**. Valor abaixo
+vale para as duas tabelas (idênticas).
+
+| Categoria | Colunas (total do período) |
+|---|---|
+| **Quantidades/flags** | quantity 903.193 · quantity_principal 455.385 · is_house_traffic 3.091 · has_upsell 24.981 / has_upsell2 11.810 / has_upsell3 3.224 · has_downsell 8.169 / has_downsell2 3.533 / has_downsell3 803 · has_order_bump 0 |
+| **Faturamento/custo** | total_price 182.778.773,54 · total_price_usd 35.991.830,03 · total_collected_usd 37.896.300,12 · product_cost 22.934.018,13 · product_cost_usd 4.515.965,00 |
+| **Impostos** | taxes 15.588.222,01 · taxes_usd 3.069.501,91 · iva 9.677.424,01 · iva_usd 1.905.051,16 |
+| **Reembolso/taxas** | total_refund 15.096.546,87 · total_refund_usd 2.973.468,89 · refund_fee 59.512,04 · refund_fee_usd 11.725,00 · chargeback_fee 16.230,90 · chargeback_fee_usd 3.220,00 |
+| **Comissão/afiliado** | commission 70.317.608,80 · commission_usd 13.842.001,31 · affiliate_amount 98.106.799,35 · affiliate_amount_usd 19.323.391,32 · revenue_afiliado 3.938.153,40 · revenue_afiliado_usd 772.000,00 |
+| **Upsell** | total_price_upsell 41.635.770,55 / _usd 8.197.153,50 · upsell2 10.815.090,44 / _usd 2.129.387,00 · upsell3 2.191.326,19 / _usd 431.360,00 |
+| **Downsell** | total_price_downsell 7.283.788,17 / _usd 1.434.738,18 · downsell2 1.662.916,14 / _usd 327.440,50 · downsell3 338.281,93 / _usd 66.631,00 |
+| **Order bump** | total_price_order_bump 0 / _usd 0 |
+
 ## Observações
 - **Grão:** em ambas, `linhas = transaction_id distintos` (1 linha por transação) — sem duplicação.
 - **Schema:** colunas e tipos idênticos nos dois lados.
-- **Medidas conferidas:** contagem de linhas, `transaction_id` distintos, `quantity`, `total_price` (BRL),
-  `total_price_usd`, `total_refund` (BRL), `total_refund_usd`.
-- **Não conferido nesta rodada (a expectativa é igualdade, dado o acima):** demais ~40 colunas numéricas
-  (commission, affiliate_amount, taxes/iva, upsell/downsell, total_collected) e a reconciliação 1-a-1
-  do conjunto de `transaction_id`.
+- **Cobertura:** **todas as 45 colunas numéricas** conferidas (soma do período) → diff zero, além da
+  quebra por dia das principais medidas (seção acima).
+- **Único ângulo ainda não checado:** reconciliação 1-a-1 do conjunto de `transaction_id` (set diff) e as
+  colunas de texto — a expectativa é igualdade total, dado que todas as 45 somas e a quebra diária batem.
 
 ## Conclusão
 `dashboard_gold_buygoods` e `tb_gex_gold_buygoods` carregam **os mesmos dados** no intervalo 27/05→08/06.

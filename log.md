@@ -7,6 +7,7 @@
 - Reconciliação read-only por dia (27/05→08/06) das duas tabelas MySQL em `instituto_experience`.
   **Idênticas** em todas as medidas conferidas (linhas, tx distintos, quantity, total_price BRL/USD,
   total_refund BRL/USD) — diferença zero. Total: 89.530 tx · 903.193 qtd · R$ 182,78 mi · US$ 35,99 mi.
+- Estendido p/ **todas as 45 colunas numéricas** (soma do período): **diff = 0 em 45/45**.
 - Nota: `Operação/Validações/validacao-gold-buygoods-mysql-2026-06-09.md`.
 
 ## 2026-06-05 — FIX (repath dos geradores GERADO p/ nova estrutura ADR-001)
