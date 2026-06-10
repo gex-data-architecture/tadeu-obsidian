@@ -11,6 +11,14 @@
 - Skill endurecida: **detecção automática da linha de cabeçalho** (export do Slimtide tem preâmbulo
   Transactions/Criteria/Date Range antes do header). Nota: `Operação/Validações/validacao-conta-buygoods-12501.md`.
 
+## 2026-06-10 — ACHADO (reembolso parcial: silver não devolve fee da plataforma proporcional)
+- Lendo os jobs Glue bronze→silver (BuyGoods), confirmado: em refund **parcial**, `taxes_usd`
+  (=`merchant_commission`) fica **cheia/congelada** e o `commission_usd` zera a fee **inteira** (binário),
+  enquanto a plataforma devolve **proporcional** ao estornado. → `commission_usd` superestimado nos parciais.
+- Quantificado (01/04→09/06, 7.627 parciais, ~40,6% estornado em média): over-credit ≈ **US$ 102.398**.
+- Nota: `Operação/Validações/validacao-reembolso-parcial-fee.md`. Recomendação: ratear a fee no `commission_usd`
+  (trechos já marcados `# AJUSTE`).
+
 ## 2026-06-10 — SKILL (2 skills de validação BuyGoods: plataforma e conta)
 - Criadas **`validar-plataforma-buygoods`** (silver × Master Overview agregado; total + por dia) e
   **`validar-conta-buygoods`** (silver × extrato "Transactions" por `account_id`; campo a campo, total + por dia,
