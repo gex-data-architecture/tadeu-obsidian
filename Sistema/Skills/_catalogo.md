@@ -1,13 +1,13 @@
 ---
 tipo: indice
 gerado_por: skill/catalogo-skills
-atualizado_em: 2026-06-09
+atualizado_em: 2026-06-10
 tags: [sistema, skills, moc]
 ---
 # 🧩 Catálogo de Skills
 
 > GERADO por `catalogo-skills`. Não editar à mão — rode a skill de novo.
-> As skills ficam em `.claude/skills/<nome>/SKILL.md`. Total atual: **7**.
+> As skills ficam em `.claude/skills/<nome>/SKILL.md`. Total atual: **9**.
 
 ## Por categoria
 
@@ -22,6 +22,12 @@ tags: [sistema, skills, moc]
 |---|---|---|
 | `limpeza-banco` | Metodologia para caçar tabelas/views excluíveis com segurança (read-only): investiga, gera scripts `.sql` de quarentena/DROP e documenta — nunca executa DDL. | "limpeza de banco", "tabelas/views não usadas", "o que posso apagar", "tabela vazia", "view quebrada". |
 | `organizar-eventos` | Separa as notas de eventos do MySQL em `Eventos/ENABLE` (ativos) e `Eventos/DISABLE` (inativos), lendo o STATUS real em `information_schema.EVENTS`. Read-only no banco; só move `.md`. | "separar/organizar eventos", "eventos ativos/inativos", "ENABLE/DISABLE", "quais events estão rodando"; após ligar/desligar um event no banco. |
+
+### Validação / Reconciliação
+| Skill | O que faz | Quando usar (gatilhos) |
+|---|---|---|
+| `validar-plataforma-buygoods` | Reconcilia a silver `tb_gex_buygoods_unified` (toda a plataforma) com o **Master Overview** do BuyGoods (Excel diário). Total + por dia. Read-only. | "validar a plataforma BuyGoods", "validar Master Overview", "bater Gross/Net/Refunds da BuyGoods", "validação total e por dia". |
+| `validar-conta-buygoods` | Reconcilia a silver de UMA conta (`account_id`) com o extrato **Transactions** do BuyGoods (Excel por conta), campo a campo, total + por dia, com auto-detecção de quebra nos refunds. Read-only. | "validar a conta/account", "validar o extrato do BuyGoods", "validar Memopezil", "extrato Transactions", "bater a silver com a conta X". |
 
 ### Ingestão de conhecimento
 | Skill | O que faz | Quando usar (gatilhos) |

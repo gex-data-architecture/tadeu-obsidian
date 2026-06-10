@@ -3,6 +3,13 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-10 — SKILL (2 skills de validação BuyGoods: plataforma e conta)
+- Criadas **`validar-plataforma-buygoods`** (silver × Master Overview agregado; total + por dia) e
+  **`validar-conta-buygoods`** (silver × extrato "Transactions" por `account_id`; campo a campo, total + por dia,
+  com auto-detecção de quebra nos refunds). Scripts parametrizados (Excel/conta), período derivado do Excel.
+- Os 2 geradores ad-hoc e as 2 notas antigas foram **substituídos** pelas skills (notas canônicas:
+  `validacao-plataforma-buygoods-<fim>.md` e `validacao-conta-buygoods-<acc>.md`). Catálogo: **9 skills**.
+
 ## 2026-06-10 — QUERY (validação silver × extrato BuyGoods por CONTA — Memopezil 12340, campo a campo)
 - Validação completa, campo a campo, da silver para `account_id=12340` contra o extrato diário da plataforma
   (Excel). Alinhamento: **Excel(D)=silver(D−1)** na base `datetime_platform`/`datetime_refunded_platform`.
@@ -12,7 +19,7 @@
 - **Resultado:** sale-side reconcilia (~−0,65% uniforme). ⚠️ Refunds −12,6% / Chargebacks −7,7% por **lag de
   estornos recentes** (mai/jun) — início do período bate. ❌ Commission/Fee **Voids não são deriváveis** (dependem
   da política de void da BuyGoods; comissão/fee em geral não são estornadas). Amount/Balance = settlement (allowances).
-- Nota + gerador `.py` (lê Excel+MySQL): `Operação/Validações/validacao-silver-buygoods-memopezil-12340.md`.
+- Nota + gerador `.py` (lê Excel+MySQL): `Operação/Validações/validacao-conta-buygoods-12340.md (skill validar-conta-buygoods)`.
 
 ## 2026-06-09 — QUERY (validação silver tb_gex_buygoods_unified × plataforma BuyGoods — DIÁRIA)
 - Reconciliação **dia a dia** com o **export diário** do Master Overview (Excel, 01/04→09/06, USD),
@@ -24,7 +31,7 @@
   **Chargebacks**: incluído o `chargeback_fee` na definição (`total_refund_usd + chargeback_fee_usd`) →
   desvio caiu de −16,5% para **−5,4%**. ⚠️ Gross **+2% no fim (junho)** = settlement do período recente.
 - Nota com **tabela por dia** (plataforma × silver lado a lado, 70 dias) + de-para + total + achados,
-  e gerador `.py` que lê Excel+MySQL: `Operação/Validações/validacao-silver-buygoods-plataforma-2026-06-09.md`.
+  e gerador `.py` que lê Excel+MySQL: `Operação/Validações/validacao-plataforma-buygoods-2026-06-09.md (skill validar-plataforma-buygoods)`.
 
 ## 2026-06-09 — INGEST (Operação: 7 fluxos N8N + 6 planilhas + linkagem com dashboards)
 - 1ª passada da pasta "Operação Obsidian" (OneDrive): criadas **7 notas de fluxo** em `Operação/N8N/`

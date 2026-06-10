@@ -1,27 +1,26 @@
 ---
 tipo: validacao
-par: tb_gex_buygoods_unified (silver MySQL) x plataforma BuyGoods (Master Overview, diário)
+par: tb_gex_buygoods_unified (silver) x plataforma BuyGoods (Master Overview, diário)
 data: 2026-06-09
 periodo: 2026-04-01 a 2026-06-09
 moeda: USD
-gerado_por: Operação/Validações/validacao_silver_buygoods_plataforma.py
+gerado_por: skill/validar-plataforma-buygoods
 tags: [validacao, reconciliacao, buygoods, silver, plataforma]
 ---
 # Validação — silver `tb_gex_buygoods_unified` × plataforma BuyGoods (diário)
 
-> Reconciliação **dia a dia** contra o export diário do Master Overview (USD), alinhada pelo **timestamp da plataforma** (`datetime_platform` / `datetime_refunded_platform`).
-> Veredito: a silver bate **≤1%** em Gross/Commissions/Refunds/Taxes; **Refunds reconcilia quase 100%**; **Chargebacks ~−5%** (após incluir o `chargeback_fee`). Único drift maior: **Gross de junho (+2%)** — settlement.
+> Master Overview **2026-04-01 → 2026-06-09** (USD). Silver alinhada pelo **timestamp da plataforma**. Somente leitura.
 
-## De-para (campo da silver por KPI, base timestamp-plataforma)
+## De-para (KPI plataforma → silver)
 
-| KPI (plataforma) | Definição na silver |
+| KPI | Definição na silver |
 |---|---|
-| **Gross Sales** | `SUM(total_price_usd - iva_usd)` por `DATE(datetime_platform)` |
-| **Commissions** | `SUM(affiliate_amount_usd)` por `DATE(datetime_platform)` |
-| **Refunds** | `SUM(total_refund_usd)` (não-chargeback) por `DATE(datetime_refunded_platform)` |
-| **Chargebacks** | `SUM(total_refund_usd + chargeback_fee_usd)` onde `payment_status=chargeback OR transaction_type=Chargeback`, por `DATE(datetime_refunded_platform)` |
-| **Taxes** | `SUM(iva_usd)` das vendas `approved` por `DATE(datetime_platform)` |
-| **Net Sales** | `Gross − Commissions − Refunds − Chargebacks − Taxes` (plataforma ainda soma `Commission Voids`) |
+| Gross Sales | `SUM(total_price_usd - iva_usd)` por `DATE(datetime_platform)` |
+| Commissions | `SUM(affiliate_amount_usd)` por `DATE(datetime_platform)` |
+| Refunds | `SUM(total_refund_usd)` (não-chargeback) por `DATE(datetime_refunded_platform)` |
+| Chargebacks | `SUM(total_refund_usd + chargeback_fee_usd)` (chargeback), mesma data |
+| Taxes | `SUM(iva_usd)` das vendas `approved` por `DATE(datetime_platform)` |
+| Net Sales | `Gross − Commissions − Refunds − Chargebacks − Taxes` (plataforma soma Commission Voids) |
 
 ## Total do período
 
@@ -34,11 +33,17 @@ tags: [validacao, reconciliacao, buygoods, silver, plataforma]
 | Taxes | 4.940.501,19 | 4.985.461,52 | 44.960,33 | +0.91% |
 | Net Sales | 20.367.203,07 | 20.940.473,25 | 573.270,18 | +2.81% |
 
-> **Refunds** reconcilia (+0,05%) ao atribuir pelo `datetime_refunded_platform`. **Chargebacks** agora inclui o `chargeback_fee` (passou de −16,5% para ~−5%). **Net** herda o resíduo de voids + chargebacks + gross de junho.
+## Por mês (localizar a diferença)
+
+| Mês | Δ Gross% | Δ Comm% | Δ Refunds% | Δ Chargeback% | Δ Net |
+|---|--:|--:|--:|--:|--:|
+| 2026-04 | -1.01% | -0.85% | -1.37% | -27.30% | 33.101,98 |
+| 2026-05 | +0.09% | -0.51% | -1.52% | -6.82% | 433.563,93 |
+| 2026-06 | +1.97% | -0.02% | +2.88% | -2.13% | 106.604,27 |
 
 ## Por dia — plataforma × silver (USD)
 
-> Cada KPI com o valor da **plataforma (P)** e da **silver (S)** lado a lado, e o **Δ Net** (silver−plataforma) para localizar dias divergentes.
+> Cada KPI com plataforma (P) e silver (S) lado a lado + Δ Net.
 
 | Dia | Gross P | Gross S | Comm P | Comm S | Refund P | Refund S | CB P | CB S | Tax P | Tax S | Net P | Net S | Δ Net |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
@@ -114,19 +119,17 @@ tags: [validacao, reconciliacao, buygoods, silver, plataforma]
 | 09/06 | 1.925.110,74 | 1.963.179,92 | 1.136.738,52 | 1.136.770,36 | 630.595,35 | 647.849,17 | 39.761,07 | 36.992,40 | 79.838,91 | 109.151,01 | 39.214,58 | 32.416,98 | -6.797,60 |
 | **Total** | **98.682.421,49** | **99.058.916,16** | **59.795.581,89** | **59.529.378,06** | **13.112.830,70** | **13.119.432,77** | **511.617,99** | **484.170,56** | **4.940.501,19** | **4.985.461,52** | **20.367.203,07** | **20.940.473,25** | **573.270,18** |
 
-## Achados
+## Achados (auto)
 
-1. **Refunds reconcilia (~100%)** ao atribuir por `datetime_refunded_platform` e separar chargeback — confirma que a silver tem os reembolsos certos; o que faltava era a **data/critério** de atribuição.
-2. **Chargebacks:** o "Chargebacks" da plataforma inclui a **taxa de chargeback** → definição corrigida para `total_refund_usd + chargeback_fee_usd`, que derrubou o desvio de **−16,5% para ~−5%**. O resíduo restante (~27k) é provável atribuição de data de borda / algum chargeback ainda não marcado como tal na silver.
-3. ⚠️ **Gross drifta positivo no fim do período (junho)**: os maiores desvios de Gross estão em **01–04/06 e 09/06** (silver acima da plataforma) — período recente, provável **settlement** (vendas/ajustes muito novos ainda não batem entre origem e silver). Reavaliar com export mais recente.
-4. **Commissions −0,45%** e **Taxes +0,91%** são desvios pequenos e ~uniformes (arredondamento/FX/definição fina).
-5. A plataforma soma **Commission Voids** (~45k no período) no Net; a silver não modela voids — parte do Δ Net vem daí.
+- **Maiores desvios de Net (dia):** 27/05 (130.440,17) · 26/05 (118.707,71) · 28/05 (69.007,58) · 25/05 (58.623,86) · 31/05 (55.933,89)
+- **Chargebacks** incluem a `chargeback_fee` (`total_refund_usd + chargeback_fee_usd`).
+- **Commission Voids** não é modelado na silver → parte do Δ Net vem daí.
+- Desvios pequenos e ~uniformes = arredondamento/FX/definição fina; desvios concentrados num período recente = provável **settlement** (reavaliar com export mais novo); quebra com data fixa = investigar **ingestão**.
 
 ## Reproduzir
-- Plataforma: `Master_Overview_2026-04-01_2026-06-090wT8Ci.xls` (Downloads) — export diário do Master Overview.
-- Silver: este script (`validacao_silver_buygoods_plataforma.py`), read-only no MySQL.
+- Plataforma: `Master_Overview_2026-04-01_2026-06-090wT8Ci.xls`.
+- Skill `validar-plataforma-buygoods` (`scripts/validar_plataforma.py`), read-only no MySQL.
 
 ## Relacionados
-- Silver doc: [[Fontes de Dados/Buygoods/doc_silver_buygoods]]
-- Validação gold (MySQL×MySQL): [[validacao-gold-buygoods-mysql-2026-06-09]]
-- Schema: [[CLAUDE]] · Diário: [[log]]
+- Conta específica: skill `validar-conta-buygoods`
+- Silver doc: [[Fontes de Dados/Buygoods/doc_silver_buygoods]] · [[CLAUDE]] · [[log]]
