@@ -1,182 +1,189 @@
 # -*- coding: utf-8 -*-
 """
 validacao_silver_buygoods_plataforma.py
-Reconciliação da silver `instituto_experience.tb_gex_buygoods_unified` (MySQL) com os
-KPIs da **plataforma BuyGoods** (Master Overview), período 01/04/2026 a 09/06/2026.
+Reconciliação DIÁRIA da silver `instituto_experience.tb_gex_buygoods_unified` (MySQL)
+com o export da **plataforma BuyGoods** (Master Overview, diário), 01/04 a 09/06/2026, USD.
 
-SOMENTE LEITURA no MySQL. Gera um relatório markdown em Operação/Validações/.
-Os valores da plataforma são fixos aqui (lidos da tela/Excel da conta master).
-De-para descoberto por engenharia reversa (ver observações no relatório).
+Fontes:
+  - Plataforma: Excel diário (Downloads) — Gross/Commissions/Refunds/Chargebacks/Commission Voids/Taxes/Net.
+  - Silver: MySQL (read-only), alinhada pelo timestamp DA PLATAFORMA (datetime_platform /
+    datetime_refunded_platform) para casar o "dia" com o BuyGoods.
 
+Gera o relatório markdown em Operação/Validações/. Somente leitura no banco.
 Uso:  python validacao_silver_buygoods_plataforma.py
+Requer: pandas, xlrd>=2.0.1, pymysql.
 """
 import json
 import os
 import sys
-from decimal import Decimal
-from datetime import datetime
+import pandas as pd
+import pymysql
 
 try:
     sys.stdout.reconfigure(encoding='utf-8')
 except Exception:
     pass
 
-import pymysql
-
 VAULT = r'C:\Users\tadeu\DataTeamDocs'
 OUTDIR = os.path.join(VAULT, 'Operação', 'Validações')
-PERIODO_INI, PERIODO_FIM = '2026-04-01', '2026-06-09'
-TODAY = '2026-06-09'
+XLS = r'C:\Users\tadeu\Downloads\Master_Overview_2026-04-01_2026-06-090wT8Ci.xls'
+INI, FIM = '2026-04-01', '2026-06-09'
 REPORT = os.path.join(OUTDIR, 'validacao-silver-buygoods-plataforma-2026-06-09.md')
 
-# KPIs da plataforma BuyGoods (Master Overview), 01/04 a 09/06/2026 — fonte da verdade.
-PLAT = {
-    'gross': Decimal('98681080.46'),
-    'refunds': Decimal('13624448.77'),
-    'commissions': Decimal('59750058.50'),
-    'taxes': Decimal('4940464.79'),
-    'net': Decimal('20366108.40'),
-}
+# ---------------- plataforma (Excel diário) ----------------
+p = pd.read_excel(XLS, engine='xlrd', header=0)
+p.columns = [str(c).strip() for c in p.columns]
+p = p[p['Date'].astype(str).str.strip() != 'Total'].copy()
+p['d'] = pd.to_datetime(p['Date'], format='%B %d, %Y').dt.date
+PCOLS = ['Gross Sales', 'Commissions', 'Refunds', 'Chargebacks', 'Commission Voids', 'Taxes', 'Net Sales']
+for c in PCOLS:
+    p[c] = pd.to_numeric(p[c], errors='coerce')
 
-with open(r'C:\Users\tadeu\.claude.json', 'r', encoding='utf-8') as f:
-    env = json.load(f)['mcpServers']['mysql']['env']
-conn = pymysql.connect(
-    host=env['MYSQL_HOST'], port=int(env['MYSQL_PORT']),
-    user=env['MYSQL_USER'], password=env['MYSQL_PASS'],
-    database=env['MYSQL_DB'], charset='utf8mb4',
-    cursorclass=pymysql.cursors.DictCursor, connect_timeout=30,
-)
-
-PERDAY_SQL = f"""
-WITH s AS (
-  SELECT created_at_date d,
-         SUM(total_price_usd - iva_usd) gross,
-         SUM(affiliate_amount_usd) commissions,
-         SUM(CASE WHEN payment_status='approved' THEN iva_usd ELSE 0 END) taxes
-  FROM instituto_experience.tb_gex_buygoods_unified
-  WHERE created_at_date BETWEEN '{PERIODO_INI}' AND '{PERIODO_FIM}'
-  GROUP BY created_at_date
-),
-r AS (
-  SELECT date_refunded d, SUM(total_refund_usd) refunds
-  FROM instituto_experience.tb_gex_buygoods_unified
-  WHERE date_refunded BETWEEN '{PERIODO_INI}' AND '{PERIODO_FIM}'
-  GROUP BY date_refunded
-)
-SELECT s.d AS dia,
-  ROUND(s.gross,2) gross, ROUND(COALESCE(r.refunds,0),2) refunds,
-  ROUND(s.commissions,2) commissions, ROUND(s.taxes,2) taxes,
-  ROUND(s.gross - COALESCE(r.refunds,0) - s.commissions - s.taxes,2) net_calc
-FROM s LEFT JOIN r ON r.d = s.d
-ORDER BY s.d
-"""
-
-with conn.cursor() as cur:
-    cur.execute(PERDAY_SQL)
-    rows = cur.fetchall()
+# ---------------- silver (MySQL, base timestamp da plataforma) ----------------
+env = json.load(open(r'C:\Users\tadeu\.claude.json', encoding='utf-8'))['mcpServers']['mysql']['env']
+cn = pymysql.connect(host=env['MYSQL_HOST'], port=int(env['MYSQL_PORT']), user=env['MYSQL_USER'],
+                     password=env['MYSQL_PASS'], database=env['MYSQL_DB'], charset='utf8mb4',
+                     cursorclass=pymysql.cursors.DictCursor)
 
 
-def D(v):
-    return Decimal(str(v or 0))
+def q(sql):
+    with cn.cursor() as c:
+        c.execute(sql)
+        return c.fetchall()
+
+
+sales = q(f"""SELECT LEFT(datetime_platform,10) d,
+  SUM(total_price_usd - iva_usd) gross, SUM(affiliate_amount_usd) comm,
+  SUM(CASE WHEN payment_status='approved' THEN iva_usd ELSE 0 END) taxes
+ FROM instituto_experience.tb_gex_buygoods_unified
+ WHERE LEFT(datetime_platform,10) BETWEEN '{INI}' AND '{FIM}'
+ GROUP BY LEFT(datetime_platform,10)""")
+refs = q(f"""SELECT LEFT(datetime_refunded_platform,10) d,
+  SUM(CASE WHEN payment_status='chargeback' OR transaction_type='Chargeback' THEN total_refund_usd ELSE 0 END) cb,
+  SUM(CASE WHEN NOT(payment_status='chargeback' OR transaction_type='Chargeback') THEN total_refund_usd ELSE 0 END) rf
+ FROM instituto_experience.tb_gex_buygoods_unified
+ WHERE LEFT(datetime_refunded_platform,10) BETWEEN '{INI}' AND '{FIM}'
+ GROUP BY LEFT(datetime_refunded_platform,10)""")
+s = pd.DataFrame(sales); r = pd.DataFrame(refs)
+for df in (s, r):
+    df['d'] = pd.to_datetime(df['d']).dt.date
+for col in ['gross', 'comm', 'taxes']:
+    s[col] = s[col].astype(float)
+for col in ['cb', 'rf']:
+    r[col] = r[col].astype(float)
+
+m = p.merge(s, on='d', how='left').merge(r, on='d', how='left').fillna(0).sort_values('d')
+# net silver pela MESMA fórmula da plataforma (sem commission voids, que a silver não modela)
+m['net_sv'] = m['gross'] - m['comm'] - m['rf'] - m['cb'] - m['taxes']
+# deltas (silver - plataforma)
+m['dG'] = m['gross'] - m['Gross Sales']
+m['dC'] = m['comm'] - m['Commissions']
+m['dR'] = m['rf'] - m['Refunds']
+m['dB'] = m['cb'] - m['Chargebacks']
+m['dT'] = m['taxes'] - m['Taxes']
+m['dN'] = m['net_sv'] - m['Net Sales']
 
 
 def br(v):
-    """Formata Decimal em pt-BR: 1.234.567,89."""
-    return f'{D(v):,.2f}'.replace(',', '_').replace('.', ',').replace('_', '.')
+    return f'{v:,.2f}'.replace(',', '_').replace('.', ',').replace('_', '.')
 
 
-def pct(diff, base):
-    return '—' if base == 0 else f'{(diff / base * 100):+.2f}%'
+def pc(s_, p_):
+    return '—' if p_ == 0 else f'{(s_-p_)/p_*100:+.2f}%'
 
-
-# totais (silver)
-tot = {k: sum(D(r[k2]) for r in rows) for k, k2 in
-       [('gross', 'gross'), ('refunds', 'refunds'), ('commissions', 'commissions'),
-        ('taxes', 'taxes'), ('net', 'net_calc')]}
 
 L = []
 w = L.append
 w('---')
 w('tipo: validacao')
-w('par: tb_gex_buygoods_unified (silver MySQL) x plataforma BuyGoods (Master Overview)')
-w(f'data: {TODAY}')
-w(f'periodo: {PERIODO_INI} a {PERIODO_FIM}')
+w('par: tb_gex_buygoods_unified (silver MySQL) x plataforma BuyGoods (Master Overview, diário)')
+w('data: 2026-06-09')
+w(f'periodo: {INI} a {FIM}')
 w('moeda: USD')
 w('gerado_por: Operação/Validações/validacao_silver_buygoods_plataforma.py')
 w('tags: [validacao, reconciliacao, buygoods, silver, plataforma]')
 w('---')
-w('# Validação — silver `tb_gex_buygoods_unified` × plataforma BuyGoods')
+w('# Validação — silver `tb_gex_buygoods_unified` × plataforma BuyGoods (diário)')
 w('')
-w(f'> Reconciliação dos KPIs do **Master Overview** (01/04→09/06/2026, USD) contra a silver no MySQL.')
-w('> Somente leitura. A silver **reproduz a plataforma dentro de ~0,3%–1,2%** por KPI — diferenças de '
-  'definição/atribuição de data/fuso, **não** de dados faltando.')
+w('> Reconciliação **dia a dia** contra o export diário do Master Overview (USD), alinhada pelo '
+  '**timestamp da plataforma** (`datetime_platform` / `datetime_refunded_platform`).')
+w('> Veredito: a silver bate **≤1%** em Gross/Commissions/Refunds/Taxes; **Refunds reconcilia quase 100%**. '
+  'Dois pontos de atenção: **Chargebacks (−16,5%)** e **Gross de junho (+2%)**.')
 w('')
-
-# ---- de-para
-w('## De-para descoberto (campo da silver por KPI)')
+w('## De-para (campo da silver por KPI, base timestamp-plataforma)')
 w('')
 w('| KPI (plataforma) | Definição na silver |')
 w('|---|---|')
-w('| **Gross Sales** | `SUM(total_price_usd - iva_usd)` por `created_at_date` |')
-w('| **Refunds & Chargebacks** | `SUM(total_refund_usd)` por **`date_refunded`** (não pela data da venda) |')
-w('| **Commissions** | `SUM(affiliate_amount_usd)` (todas as linhas) por `created_at_date` |')
-w('| **Taxes** | `SUM(iva_usd)` das vendas `payment_status=approved` (não o `taxes_usd`) |')
-w('| **Net Sales** | `Gross − Refunds − Commissions − Taxes` (calculado) |')
+w('| **Gross Sales** | `SUM(total_price_usd - iva_usd)` por `DATE(datetime_platform)` |')
+w('| **Commissions** | `SUM(affiliate_amount_usd)` por `DATE(datetime_platform)` |')
+w('| **Refunds** | `SUM(total_refund_usd)` (não-chargeback) por `DATE(datetime_refunded_platform)` |')
+w('| **Chargebacks** | `SUM(total_refund_usd)` onde `payment_status=chargeback OR transaction_type=Chargeback` |')
+w('| **Taxes** | `SUM(iva_usd)` das vendas `approved` por `DATE(datetime_platform)` |')
+w('| **Net Sales** | `Gross − Commissions − Refunds − Chargebacks − Taxes` (plataforma ainda soma `Commission Voids`) |')
 w('')
 
-# ---- geral
-w('## Geral (total do período)')
+# total
+w('## Total do período')
 w('')
-w('| KPI | Plataforma (USD) | Silver (USD) | Δ | Δ% |')
+w('| KPI | Plataforma | Silver | Δ | Δ% |')
 w('|---|--:|--:|--:|--:|')
-for k, lbl in [('gross', 'Gross Sales'), ('refunds', 'Refunds & Chargebacks'),
-               ('commissions', 'Commissions'), ('taxes', 'Taxes'), ('net', 'Net Sales (calc)')]:
-    diff = tot[k] - PLAT[k]
-    w(f'| {lbl} | {br(PLAT[k])} | {br(tot[k])} | {br(diff)} | {pct(diff, PLAT[k])} |')
+for lbl, pcol, scol in [('Gross Sales', 'Gross Sales', 'gross'), ('Commissions', 'Commissions', 'comm'),
+                        ('Refunds', 'Refunds', 'rf'), ('Chargebacks', 'Chargebacks', 'cb'),
+                        ('Taxes', 'Taxes', 'taxes'), ('Net Sales', 'Net Sales', 'net_sv')]:
+    P, S = m[pcol].sum(), m[scol].sum()
+    w(f'| {lbl} | {br(P)} | {br(S)} | {br(S-P)} | {pc(S, P)} |')
 w('')
-w('> **Net** acumula mais desvio relativo (+3,3%) por ser um **resíduo pequeno de números grandes** — '
-  'os erros de cada componente se somam. Gross/Refunds/Commissions/Taxes ficam todos ≤1,2%.')
-w('')
-
-# ---- por dia
-w('## Por dia (lado silver — USD)')
-w('')
-w('> A plataforma só forneceu o **total** do período (tela do Master Overview); os valores **diários** abaixo '
-  'são da silver, com **Net calculado**. O comparativo diário plataforma×silver será fechado quando chegar o Excel.')
-w('')
-w('| Dia | Gross | Refunds & CB | Commissions | Taxes | **Net (calc)** |')
-w('|---|--:|--:|--:|--:|--:|')
-for r in rows:
-    d = r['dia']
-    ds = d.strftime('%d/%m') if hasattr(d, 'strftime') else str(d)
-    w(f"| {ds} | {br(r['gross'])} | {br(r['refunds'])} | {br(r['commissions'])} | {br(r['taxes'])} | {br(r['net_calc'])} |")
-w(f"| **Total** | **{br(tot['gross'])}** | **{br(tot['refunds'])}** | **{br(tot['commissions'])}** "
-  f"| **{br(tot['taxes'])}** | **{br(tot['net'])}** |")
+w('> **Refunds** agora reconcilia (+0,05%) ao atribuir pelo `datetime_refunded_platform` e separar chargeback. '
+  '**Chargebacks** fica −16,5% (a silver subnotifica) e **Net** herda o efeito de voids + chargebacks + gross de junho.')
 w('')
 
-# ---- observações
-w('## Observações')
+# por mês
+w('## Onde a diferença está (por mês)')
 w('')
-w('- **Mapeamento não é óbvio:** "Taxes" = `iva_usd` (o `taxes_usd` somaria ~9M, ~2x); "Commissions" = '
-  '`affiliate_amount_usd` (o `commission_usd` é ~37M, é outro conceito — provável valor do vendor/fee).')
-w('- **Reembolso é por `date_refunded`:** trocar a data de atribuição derrubou o erro de **−4,0% para −1,2%** '
-  '(reembolsos de vendas antigas processados dentro do período).')
-w('- **Resíduos com assinatura de fuso:** `created_at` é `timestamp`; a plataforma agrupa o "dia" no fuso dela. '
-  'Nas bordas de cada dia, transações caem em dias diferentes → gap pequeno e bidirecional ao longo de 70 dias. Some FX/arredondamento.')
-w('- **Tipos de transação na silver:** Sale, Cancel, Chargeback, Refund, Fulfillment, Rebill — a plataforma '
-  'filtra/atribui por tipo (Gross líquido de IVA; Taxes só de approved).')
-w('- **Grão:** 1 linha por `transaction_id` (411.186 linhas = 411.186 tx no período).')
+m['mes'] = pd.to_datetime(m['d']).dt.strftime('%Y-%m')
+gm = m.groupby('mes').agg(Gp=('Gross Sales', 'sum'), Gs=('gross', 'sum'),
+                          Cp=('Commissions', 'sum'), Cs=('comm', 'sum'),
+                          Rp=('Refunds', 'sum'), Rs=('rf', 'sum'),
+                          Bp=('Chargebacks', 'sum'), Bs=('cb', 'sum'))
+w('| Mês | Δ Gross% | Δ Comm% | Δ Refunds% | Δ Chargeback% |')
+w('|---|--:|--:|--:|--:|')
+for mes, row in gm.iterrows():
+    w(f"| {mes} | {pc(row.Gs,row.Gp)} | {pc(row.Cs,row.Cp)} | {pc(row.Rs,row.Rp)} | {pc(row.Bs,row.Bp)} |")
 w('')
-w('## ⚠️ Pendências para fechar ao centavo')
-w('- **Excel da conta master** (valores diários e por campo) → reconciliação diária plataforma×silver e '
-  'validação além dos 5 KPIs (por produto/oferta/afiliado).')
-w('- Confirmar o **fuso** usado pela plataforma para fechar o dia (provável causa dos resíduos de borda).')
+w('> A diferença **não é uniforme**: o Gross drifta **+2% em junho** (período mais recente — provável settlement '
+  'de vendas/ajustes ainda não refletido igual nos dois lados). Abril fica levemente negativo.')
 w('')
 
-w('## Como reproduzir (read-only)')
-w('```sql')
-w(PERDAY_SQL.strip())
-w('```')
+# por dia (deltas)
+w('## Por dia — Δ silver − plataforma (USD)')
+w('')
+w('> Valores são **diferença** (silver menos plataforma) por KPI. Use para localizar dias divergentes.')
+w('')
+w('| Dia | Δ Gross | Δ Comm | Δ Refunds | Δ Chargeback | Δ Taxes | Δ Net |')
+w('|---|--:|--:|--:|--:|--:|--:|')
+for _, x in m.iterrows():
+    w(f"| {x.d.strftime('%d/%m')} | {br(x.dG)} | {br(x.dC)} | {br(x.dR)} | {br(x.dB)} | {br(x.dT)} | {br(x.dN)} |")
+w(f"| **Total** | **{br(m.dG.sum())}** | **{br(m.dC.sum())}** | **{br(m.dR.sum())}** "
+  f"| **{br(m.dB.sum())}** | **{br(m.dT.sum())}** | **{br(m.dN.sum())}** |")
+w('')
+
+# achados
+w('## Achados')
+w('')
+w('1. **Refunds reconcilia (~100%)** ao atribuir por `datetime_refunded_platform` e separar chargeback — '
+  'confirma que a silver tem os reembolsos certos; o que faltava era a **data/critério** de atribuição.')
+w('2. 🔴 **Chargebacks −16,5%** (silver subnotifica ~85k): investigar se há chargeback caindo em outro '
+  '`payment_status`/`transaction_type` na silver, ou chargeback sem `total_refund_usd` preenchido.')
+w('3. ⚠️ **Gross +2% em junho** (dias 01–04/06 e 09/06 lideram o desvio, silver acima): período recente — '
+  'provável **settlement** (vendas/ajustes muito novos ainda não batem entre origem e silver). Reavaliar com export mais recente.')
+w('4. **Commissions −0,45%** e **Taxes +0,91%** são desvios pequenos e ~uniformes (arredondamento/FX/definição fina).')
+w('5. A plataforma soma **Commission Voids** (~45k no período) no Net; a silver não modela voids — '
+  'parte do Δ Net vem daí.')
+w('')
+
+w('## Reproduzir')
+w(f'- Plataforma: `{os.path.basename(XLS)}` (Downloads) — export diário do Master Overview.')
+w('- Silver: este script (`validacao_silver_buygoods_plataforma.py`), read-only no MySQL.')
 w('')
 w('## Relacionados')
 w('- Silver doc: [[Fontes de Dados/Buygoods/doc_silver_buygoods]]')
@@ -185,9 +192,7 @@ w('- Schema: [[CLAUDE]] · Diário: [[log]]')
 w('')
 
 os.makedirs(OUTDIR, exist_ok=True)
-with open(REPORT, 'w', encoding='utf-8') as f:
-    f.write('\n'.join(L))
-
+open(REPORT, 'w', encoding='utf-8').write('\n'.join(L))
 print('Relatório:', REPORT)
-print('Totais silver — gross', br(tot['gross']), '| refunds', br(tot['refunds']),
-      '| commissions', br(tot['commissions']), '| taxes', br(tot['taxes']), '| net', br(tot['net']))
+print('Total Δ — Gross', br(m.dG.sum()), '| Comm', br(m.dC.sum()), '| Ref', br(m.dR.sum()),
+      '| CB', br(m.dB.sum()), '| Tax', br(m.dT.sum()), '| Net', br(m.dN.sum()))

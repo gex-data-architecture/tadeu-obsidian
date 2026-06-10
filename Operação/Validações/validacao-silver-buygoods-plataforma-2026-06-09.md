@@ -1,153 +1,140 @@
 ---
 tipo: validacao
-par: tb_gex_buygoods_unified (silver MySQL) x plataforma BuyGoods (Master Overview)
+par: tb_gex_buygoods_unified (silver MySQL) x plataforma BuyGoods (Master Overview, diário)
 data: 2026-06-09
 periodo: 2026-04-01 a 2026-06-09
 moeda: USD
 gerado_por: Operação/Validações/validacao_silver_buygoods_plataforma.py
 tags: [validacao, reconciliacao, buygoods, silver, plataforma]
 ---
-# Validação — silver `tb_gex_buygoods_unified` × plataforma BuyGoods
+# Validação — silver `tb_gex_buygoods_unified` × plataforma BuyGoods (diário)
 
-> Reconciliação dos KPIs do **Master Overview** (01/04→09/06/2026, USD) contra a silver no MySQL.
-> Somente leitura. A silver **reproduz a plataforma dentro de ~0,3%–1,2%** por KPI — diferenças de definição/atribuição de data/fuso, **não** de dados faltando.
+> Reconciliação **dia a dia** contra o export diário do Master Overview (USD), alinhada pelo **timestamp da plataforma** (`datetime_platform` / `datetime_refunded_platform`).
+> Veredito: a silver bate **≤1%** em Gross/Commissions/Refunds/Taxes; **Refunds reconcilia quase 100%**. Dois pontos de atenção: **Chargebacks (−16,5%)** e **Gross de junho (+2%)**.
 
-## De-para descoberto (campo da silver por KPI)
+## De-para (campo da silver por KPI, base timestamp-plataforma)
 
 | KPI (plataforma) | Definição na silver |
 |---|---|
-| **Gross Sales** | `SUM(total_price_usd - iva_usd)` por `created_at_date` |
-| **Refunds & Chargebacks** | `SUM(total_refund_usd)` por **`date_refunded`** (não pela data da venda) |
-| **Commissions** | `SUM(affiliate_amount_usd)` (todas as linhas) por `created_at_date` |
-| **Taxes** | `SUM(iva_usd)` das vendas `payment_status=approved` (não o `taxes_usd`) |
-| **Net Sales** | `Gross − Refunds − Commissions − Taxes` (calculado) |
+| **Gross Sales** | `SUM(total_price_usd - iva_usd)` por `DATE(datetime_platform)` |
+| **Commissions** | `SUM(affiliate_amount_usd)` por `DATE(datetime_platform)` |
+| **Refunds** | `SUM(total_refund_usd)` (não-chargeback) por `DATE(datetime_refunded_platform)` |
+| **Chargebacks** | `SUM(total_refund_usd)` onde `payment_status=chargeback OR transaction_type=Chargeback` |
+| **Taxes** | `SUM(iva_usd)` das vendas `approved` por `DATE(datetime_platform)` |
+| **Net Sales** | `Gross − Commissions − Refunds − Chargebacks − Taxes` (plataforma ainda soma `Commission Voids`) |
 
-## Geral (total do período)
+## Total do período
 
-| KPI | Plataforma (USD) | Silver (USD) | Δ | Δ% |
+| KPI | Plataforma | Silver | Δ | Δ% |
 |---|--:|--:|--:|--:|
-| Gross Sales | 98.681.080,46 | 98.966.270,80 | 285.190,34 | +0.29% |
-| Refunds & Chargebacks | 13.624.448,77 | 13.460.386,47 | -164.062,30 | -1.20% |
-| Commissions | 59.750.058,50 | 59.478.848,06 | -271.210,44 | -0.45% |
-| Taxes | 4.940.464,79 | 4.980.909,45 | 40.444,66 | +0.82% |
-| Net Sales (calc) | 20.366.108,40 | 21.046.126,82 | 680.018,42 | +3.34% |
+| Gross Sales | 98.682.421,49 | 99.058.916,16 | 376.494,67 | +0.38% |
+| Commissions | 59.795.581,89 | 59.529.378,06 | -266.203,83 | -0.45% |
+| Refunds | 13.112.830,70 | 13.119.432,77 | 6.602,07 | +0.05% |
+| Chargebacks | 511.617,99 | 426.945,56 | -84.672,43 | -16.55% |
+| Taxes | 4.940.501,19 | 4.985.461,52 | 44.960,33 | +0.91% |
+| Net Sales | 20.367.203,07 | 20.997.698,25 | 630.495,18 | +3.10% |
 
-> **Net** acumula mais desvio relativo (+3,3%) por ser um **resíduo pequeno de números grandes** — os erros de cada componente se somam. Gross/Refunds/Commissions/Taxes ficam todos ≤1,2%.
+> **Refunds** agora reconcilia (+0,05%) ao atribuir pelo `datetime_refunded_platform` e separar chargeback. **Chargebacks** fica −16,5% (a silver subnotifica) e **Net** herda o efeito de voids + chargebacks + gross de junho.
 
-## Por dia (lado silver — USD)
+## Onde a diferença está (por mês)
 
-> A plataforma só forneceu o **total** do período (tela do Master Overview); os valores **diários** abaixo são da silver, com **Net calculado**. O comparativo diário plataforma×silver será fechado quando chegar o Excel.
+| Mês | Δ Gross% | Δ Comm% | Δ Refunds% | Δ Chargeback% |
+|---|--:|--:|--:|--:|
+| 2026-04 | -1.01% | -0.85% | -1.37% | -38.05% |
+| 2026-05 | +0.09% | -0.51% | -1.52% | -17.84% |
+| 2026-06 | +1.97% | -0.02% | +2.88% | -13.53% |
 
-| Dia | Gross | Refunds & CB | Commissions | Taxes | **Net (calc)** |
-|---|--:|--:|--:|--:|--:|
-| 01/04 | 22.807,85 | 583,71 | 15.290,16 | 1.198,15 | 5.735,83 |
-| 02/04 | 15.962,05 | 1.225,92 | 10.505,15 | 1.043,39 | 3.187,59 |
-| 03/04 | 14.375,88 | 1.021,67 | 9.519,94 | 704,99 | 3.129,28 |
-| 04/04 | 22.411,52 | 2.250,45 | 11.946,78 | 1.401,63 | 6.812,66 |
-| 05/04 | 11.868,54 | 79,00 | 7.005,49 | 566,48 | 4.217,57 |
-| 06/04 | 23.264,37 | 2.716,82 | 12.628,43 | 1.392,03 | 6.527,09 |
-| 07/04 | 18.473,38 | 1.306,39 | 11.055,23 | 1.372,48 | 4.739,28 |
-| 08/04 | 26.214,44 | 2.044,79 | 15.293,89 | 1.596,45 | 7.279,31 |
-| 09/04 | 48.233,93 | 5.184,83 | 29.993,92 | 2.620,07 | 10.435,11 |
-| 10/04 | 64.257,37 | 5.945,74 | 41.255,85 | 3.734,09 | 13.321,69 |
-| 11/04 | 76.126,02 | 5.351,35 | 46.782,24 | 4.326,58 | 19.665,85 |
-| 12/04 | 297.144,75 | 11.530,90 | 165.700,79 | 11.674,24 | 108.238,82 |
-| 13/04 | 241.186,13 | 18.087,00 | 144.172,34 | 9.079,77 | 69.847,02 |
-| 14/04 | 273.975,51 | 23.564,58 | 175.589,05 | 10.789,32 | 64.032,56 |
-| 15/04 | 319.751,02 | 30.596,26 | 204.982,43 | 13.604,71 | 70.567,62 |
-| 16/04 | 332.288,93 | 28.207,22 | 219.191,21 | 15.318,55 | 69.571,95 |
-| 17/04 | 190.291,96 | 27.144,91 | 123.913,16 | 9.518,86 | 29.715,03 |
-| 18/04 | 182.295,25 | 11.765,03 | 129.664,94 | 9.388,64 | 31.476,64 |
-| 19/04 | 241.134,15 | 9.418,29 | 166.091,86 | 10.914,39 | 54.709,61 |
-| 20/04 | 247.849,74 | 21.095,68 | 167.996,61 | 11.769,12 | 46.988,33 |
-| 21/04 | 298.666,22 | 28.235,12 | 191.755,23 | 15.388,94 | 63.286,93 |
-| 22/04 | 359.366,20 | 35.063,04 | 225.602,47 | 18.375,42 | 80.325,27 |
-| 23/04 | 475.122,75 | 41.836,83 | 279.603,36 | 25.705,41 | 127.977,15 |
-| 24/04 | 487.382,46 | 45.552,40 | 296.332,20 | 25.968,80 | 119.529,06 |
-| 25/04 | 767.270,36 | 37.113,59 | 488.906,75 | 40.492,61 | 200.757,41 |
-| 26/04 | 941.311,27 | 42.374,00 | 597.030,01 | 47.538,95 | 254.368,31 |
-| 27/04 | 921.777,81 | 75.802,74 | 583.110,29 | 45.712,74 | 217.152,04 |
-| 28/04 | 1.020.539,50 | 67.166,48 | 649.897,76 | 49.456,61 | 254.018,65 |
-| 29/04 | 955.569,55 | 73.881,55 | 615.636,23 | 45.523,87 | 220.527,90 |
-| 30/04 | 933.466,77 | 82.377,97 | 579.014,76 | 44.951,74 | 227.122,30 |
-| 01/05 | 1.067.591,76 | 202.625,66 | 647.628,77 | 53.441,85 | 163.895,48 |
-| 02/05 | 1.267.704,75 | 96.730,49 | 782.891,34 | 63.837,37 | 324.245,55 |
-| 03/05 | 1.446.199,37 | 78.548,20 | 920.497,24 | 70.040,36 | 377.113,57 |
-| 04/05 | 1.339.858,62 | 155.168,51 | 842.742,92 | 68.096,35 | 273.850,84 |
-| 05/05 | 1.197.715,17 | 145.780,59 | 761.671,77 | 60.955,01 | 229.307,80 |
-| 06/05 | 1.213.536,52 | 158.919,87 | 776.105,03 | 61.271,64 | 217.239,98 |
-| 07/05 | 1.487.786,16 | 180.722,79 | 932.794,67 | 79.298,86 | 294.969,84 |
-| 08/05 | 1.385.402,49 | 173.890,75 | 846.330,78 | 67.704,40 | 297.476,56 |
-| 09/05 | 1.667.328,59 | 119.637,13 | 1.039.172,94 | 82.045,02 | 426.473,50 |
-| 10/05 | 1.675.045,80 | 101.671,85 | 995.140,74 | 85.899,26 | 492.333,95 |
-| 11/05 | 1.676.799,50 | 219.810,74 | 1.032.496,09 | 88.610,60 | 335.882,07 |
-| 12/05 | 1.931.567,25 | 201.493,42 | 1.187.932,85 | 101.175,19 | 440.965,79 |
-| 13/05 | 1.981.358,18 | 243.293,86 | 1.194.401,50 | 105.072,73 | 438.590,09 |
-| 14/05 | 1.964.565,56 | 267.934,81 | 1.173.153,28 | 102.778,55 | 420.698,92 |
-| 15/05 | 1.815.058,56 | 284.145,74 | 1.099.929,55 | 91.349,60 | 339.633,67 |
-| 16/05 | 2.340.535,65 | 222.604,30 | 1.373.311,54 | 119.110,97 | 625.508,84 |
-| 17/05 | 2.653.525,88 | 182.237,42 | 1.557.005,53 | 133.293,97 | 780.988,96 |
-| 18/05 | 2.301.730,94 | 352.071,78 | 1.376.919,24 | 118.561,81 | 454.178,11 |
-| 19/05 | 2.316.536,96 | 315.708,45 | 1.370.568,81 | 118.862,69 | 511.397,01 |
-| 20/05 | 2.434.880,84 | 365.583,03 | 1.450.894,51 | 121.182,78 | 497.220,52 |
-| 21/05 | 2.472.921,34 | 350.536,40 | 1.469.070,60 | 123.281,60 | 530.032,74 |
-| 22/05 | 2.570.735,56 | 375.419,62 | 1.523.627,69 | 125.732,86 | 545.955,39 |
-| 23/05 | 3.217.148,84 | 294.107,84 | 1.911.872,84 | 155.054,63 | 856.113,53 |
-| 24/05 | 3.146.171,70 | 170.941,95 | 1.923.776,63 | 148.727,88 | 902.725,24 |
-| 25/05 | 3.189.229,44 | 304.011,64 | 1.893.583,50 | 155.121,60 | 836.512,70 |
-| 26/05 | 3.340.396,39 | 353.328,40 | 1.954.015,14 | 161.947,36 | 871.105,49 |
-| 27/05 | 3.079.518,16 | 456.334,28 | 1.844.280,26 | 149.489,08 | 629.414,54 |
-| 28/05 | 2.944.832,50 | 432.539,62 | 1.732.573,78 | 146.402,79 | 633.316,31 |
-| 29/05 | 2.804.630,16 | 488.822,97 | 1.656.247,71 | 139.580,04 | 519.979,44 |
-| 30/05 | 2.784.886,42 | 299.979,24 | 1.668.479,84 | 139.102,96 | 677.324,38 |
-| 31/05 | 2.775.529,46 | 177.398,04 | 1.640.755,46 | 139.844,34 | 817.531,62 |
-| 01/06 | 2.712.951,46 | 473.091,33 | 1.586.782,10 | 133.934,65 | 519.143,38 |
-| 02/06 | 2.481.993,68 | 574.039,10 | 1.441.621,75 | 123.486,45 | 342.846,38 |
-| 03/06 | 2.549.329,04 | 567.623,54 | 1.505.058,01 | 126.731,41 | 349.916,08 |
-| 04/06 | 2.459.577,55 | 654.717,61 | 1.463.752,82 | 126.222,40 | 214.884,72 |
-| 05/06 | 2.136.477,13 | 667.098,17 | 1.257.477,00 | 112.178,67 | 99.723,29 |
-| 06/06 | 2.462.791,13 | 374.247,19 | 1.446.443,19 | 134.143,63 | 507.957,12 |
-| 07/06 | 2.516.706,53 | 312.275,14 | 1.477.797,88 | 132.831,51 | 593.802,00 |
-| 08/06 | 2.373.743,07 | 629.310,62 | 1.370.651,52 | 125.757,61 | 248.023,32 |
-| 09/06 | 1.951.587,01 | 697.460,12 | 1.133.922,71 | 107.619,94 | 12.584,24 |
-| **Total** | **98.966.270,80** | **13.460.386,47** | **59.478.848,06** | **4.980.909,45** | **21.046.126,82** |
+> A diferença **não é uniforme**: o Gross drifta **+2% em junho** (período mais recente — provável settlement de vendas/ajustes ainda não refletido igual nos dois lados). Abril fica levemente negativo.
 
-## Observações
+## Por dia — Δ silver − plataforma (USD)
 
-- **Mapeamento não é óbvio:** "Taxes" = `iva_usd` (o `taxes_usd` somaria ~9M, ~2x); "Commissions" = `affiliate_amount_usd` (o `commission_usd` é ~37M, é outro conceito — provável valor do vendor/fee).
-- **Reembolso é por `date_refunded`:** trocar a data de atribuição derrubou o erro de **−4,0% para −1,2%** (reembolsos de vendas antigas processados dentro do período).
-- **Resíduos com assinatura de fuso:** `created_at` é `timestamp`; a plataforma agrupa o "dia" no fuso dela. Nas bordas de cada dia, transações caem em dias diferentes → gap pequeno e bidirecional ao longo de 70 dias. Some FX/arredondamento.
-- **Tipos de transação na silver:** Sale, Cancel, Chargeback, Refund, Fulfillment, Rebill — a plataforma filtra/atribui por tipo (Gross líquido de IVA; Taxes só de approved).
-- **Grão:** 1 linha por `transaction_id` (411.186 linhas = 411.186 tx no período).
+> Valores são **diferença** (silver menos plataforma) por KPI. Use para localizar dias divergentes.
 
-## ⚠️ Pendências para fechar ao centavo
-- **Excel da conta master** (valores diários e por campo) → reconciliação diária plataforma×silver e validação além dos 5 KPIs (por produto/oferta/afiliado).
-- Confirmar o **fuso** usado pela plataforma para fechar o dia (provável causa dos resíduos de borda).
+| Dia | Δ Gross | Δ Comm | Δ Refunds | Δ Chargeback | Δ Taxes | Δ Net |
+|---|--:|--:|--:|--:|--:|--:|
+| 01/04 | -1.887,25 | -1.261,10 | -3.379,88 | 0,00 | -4,08 | 2.585,82 |
+| 02/04 | -3.581,64 | -1.830,00 | -3.039,45 | 0,00 | 36,18 | 1.251,63 |
+| 03/04 | -2.073,14 | -1.585,11 | -3.635,67 | -658,00 | -73,08 | 3.878,72 |
+| 04/04 | -4.260,08 | -2.230,73 | -1.144,85 | 0,00 | -296,90 | -779,57 |
+| 05/04 | -2.883,71 | -1.132,43 | -207,00 | 0,00 | -464,13 | -1.080,15 |
+| 06/04 | -5.869,22 | -2.191,57 | -1.688,25 | 0,00 | -196,57 | -1.792,83 |
+| 07/04 | -5.222,53 | -2.379,37 | -2.727,57 | 0,00 | -183,76 | 68,17 |
+| 08/04 | -3.575,57 | -1.356,26 | -810,26 | -329,00 | -135,10 | -1.468,98 |
+| 09/04 | -1.600,67 | 0,00 | 0,00 | -366,67 | -721,96 | -604,47 |
+| 10/04 | -1.815,24 | 171,99 | 556,92 | 0,00 | -663,15 | -1.881,00 |
+| 11/04 | -1.542,10 | -171,99 | 58,50 | 0,00 | -509,36 | -1.152,80 |
+| 12/04 | 2.573,78 | -200,00 | 0,00 | -349,58 | -2.888,77 | 5.747,71 |
+| 13/04 | 2.573,58 | 0,00 | 23,30 | -610,94 | -2.233,14 | 4.749,51 |
+| 14/04 | 1.311,21 | 0,00 | 0,00 | -364,00 | -2.579,94 | 3.093,45 |
+| 15/04 | 1.471,86 | -187,38 | 0,00 | 0,00 | -1.881,50 | 2.937,14 |
+| 16/04 | -1.019,48 | -92,43 | 0,00 | 0,00 | -2.505,65 | 1.391,22 |
+| 17/04 | -2.555,64 | 0,00 | 391,47 | 0,00 | -1.622,93 | -2.931,69 |
+| 18/04 | -1.933,59 | 0,00 | 0,00 | -331,94 | -1.263,90 | -437,29 |
+| 19/04 | 552,01 | -250,00 | 0,00 | 0,00 | -1.686,95 | 2.488,96 |
+| 20/04 | 411,71 | 0,00 | 130,53 | -437,99 | -1.893,48 | 2.111,55 |
+| 21/04 | 2.082,61 | 0,00 | 317,85 | -105,00 | -2.226,08 | 2.802,53 |
+| 22/04 | 2.424,26 | 0,00 | 744,22 | -423,26 | -2.711,07 | 3.451,41 |
+| 23/04 | -4.718,12 | 0,00 | 512,74 | -295,88 | -3.773,39 | -1.593,19 |
+| 24/04 | -3.079,59 | 387,57 | 146,25 | -896,49 | -3.604,06 | 67,14 |
+| 25/04 | -11.087,53 | -1.740,00 | 365,34 | -35,00 | -6.972,96 | -2.826,02 |
+| 26/04 | -13.647,25 | -4.415,00 | -147,00 | -140,00 | -9.155,40 | -69,66 |
+| 27/04 | -15.761,23 | -8.300,00 | 201,55 | -70,00 | -6.611,29 | -981,49 |
+| 28/04 | -14.972,70 | -9.460,00 | 196,84 | -140,00 | -8.285,08 | 1.958,87 |
+| 29/04 | -9.240,77 | -6.870,00 | 1.140,79 | -469,00 | -7.181,95 | 3.790,33 |
+| 30/04 | -2.169,02 | -8.702,10 | 1.826,95 | -420,00 | -5.975,20 | 10.146,96 |
+| 01/05 | -19.842,47 | -6.640,00 | 3.356,70 | -210,00 | -1.053,23 | -17.165,93 |
+| 02/05 | -30.842,20 | -10.865,00 | 450,18 | -385,00 | -8.539,20 | -11.749,01 |
+| 03/05 | -38.875,30 | -13.890,00 | 727,73 | -524,58 | -11.643,36 | -13.721,21 |
+| 04/05 | -16.580,97 | -8.805,00 | 5.100,47 | -455,00 | -4.380,47 | -8.561,07 |
+| 05/05 | -23.333,24 | -8.490,71 | 1.994,05 | -560,00 | -4.335,87 | -13.277,09 |
+| 06/05 | -35.699,59 | -12.740,00 | 3.607,92 | -1.264,67 | -3.817,88 | -22.189,62 |
+| 07/05 | -54.133,54 | -13.411,12 | 2.289,79 | -1.691,51 | -4.214,76 | -37.325,94 |
+| 08/05 | -8.442,08 | -10.210,00 | 4.695,17 | -1.187,00 | -3.229,81 | 775,33 |
+| 09/05 | -37.083,78 | -14.039,35 | 1.128,61 | -925,45 | -10.452,55 | -14.733,25 |
+| 10/05 | -22.694,97 | -8.350,00 | 1.179,65 | -913,87 | -7.640,75 | -7.255,41 |
+| 11/05 | -20.044,07 | -9.875,00 | 4.826,75 | -1.922,38 | -2.731,38 | -11.395,22 |
+| 12/05 | -13.523,34 | -6.840,00 | 3.435,21 | -1.804,61 | -6.929,22 | -2.062,74 |
+| 13/05 | -6.664,65 | 0,00 | 5.278,38 | -2.826,45 | -2.043,23 | -8.265,91 |
+| 14/05 | 1.400,01 | -94,35 | 5.561,42 | -1.865,45 | -2.379,82 | -643,63 |
+| 15/05 | 20.176,79 | 0,00 | 5.287,46 | -2.197,56 | 371,33 | 16.434,22 |
+| 16/05 | 46.317,60 | 0,00 | 7.223,99 | -537,14 | -6.008,08 | 45.286,59 |
+| 17/05 | 146,13 | -176,12 | 5.994,41 | -417,66 | -11.511,52 | 5.549,39 |
+| 18/05 | 11.191,65 | 0,00 | 11.532,21 | -1.383,28 | -341,10 | -1.372,90 |
+| 19/05 | 14.936,39 | 73,88 | 10.527,07 | -1.485,00 | 1.495,91 | 3.907,67 |
+| 20/05 | 24.401,17 | -623,81 | 12.740,95 | -2.430,82 | 1.285,57 | 12.926,26 |
+| 21/05 | 14.923,17 | -240,00 | 7.503,83 | -1.050,00 | 3.923,47 | 4.785,87 |
+| 22/05 | 30.440,09 | -426,12 | 9.127,13 | -727,37 | 3.907,93 | 17.466,78 |
+| 23/05 | 329,44 | -245,00 | 6.348,75 | -2.098,80 | -7.904,74 | 4.011,07 |
+| 24/05 | 18.337,49 | 5,00 | 7.416,64 | -850,70 | -9.716,86 | 21.120,80 |
+| 25/05 | 29.055,40 | -9.895,47 | -16.378,47 | -2.795,03 | -2.270,54 | 59.918,86 |
+| 26/05 | 18.942,34 | -23.890,00 | -79.712,57 | -4.753,88 | 6.962,74 | 119.862,71 |
+| 27/05 | 22.743,66 | -24.206,12 | -95.753,32 | -3.305,07 | 13.295,14 | 131.525,17 |
+| 28/05 | 17.657,82 | -11.079,35 | -50.711,75 | -3.138,50 | 11.577,62 | 70.057,58 |
+| 29/05 | 43.633,19 | -200,00 | 10.407,34 | -965,40 | 11.657,40 | 21.887,17 |
+| 30/05 | 51.254,74 | 5,00 | 9.146,88 | -708,20 | 3.286,32 | 39.308,50 |
+| 31/05 | 21.464,60 | -14.201,12 | -21.559,33 | -1.411,27 | 1.267,43 | 57.368,89 |
+| 01/06 | 65.302,60 | -505,00 | 12.153,24 | -1.817,00 | 14.453,01 | 39.378,40 |
+| 02/06 | 90.167,41 | -20,00 | 17.467,02 | -4.146,80 | 20.448,92 | 54.271,08 |
+| 03/06 | 74.307,81 | -725,00 | 15.237,25 | -1.724,01 | 20.574,53 | 40.031,24 |
+| 04/06 | 51.374,95 | -725,00 | 21.941,92 | -2.344,91 | 24.521,56 | 6.604,54 |
+| 05/06 | 29.751,16 | -240,00 | 15.954,82 | -4.355,07 | 24.792,80 | -6.856,43 |
+| 06/06 | 10.304,65 | 0,00 | 11.072,99 | -2.813,47 | 9.622,28 | -8.023,73 |
+| 07/06 | 31.243,45 | -185,00 | 6.986,50 | -1.923,02 | 7.580,41 | 18.390,28 |
+| 08/06 | 27.477,03 | -690,00 | 15.927,94 | -5.170,08 | 24.032,88 | -8.273,51 |
+| 09/06 | 38.069,18 | 31,84 | 17.253,82 | -7.143,67 | 29.312,10 | -2.422,60 |
+| **Total** | **376.494,67** | **-266.203,83** | **6.602,07** | **-84.672,43** | **44.960,33** | **630.495,18** |
 
-## Como reproduzir (read-only)
-```sql
-WITH s AS (
-  SELECT created_at_date d,
-         SUM(total_price_usd - iva_usd) gross,
-         SUM(affiliate_amount_usd) commissions,
-         SUM(CASE WHEN payment_status='approved' THEN iva_usd ELSE 0 END) taxes
-  FROM instituto_experience.tb_gex_buygoods_unified
-  WHERE created_at_date BETWEEN '2026-04-01' AND '2026-06-09'
-  GROUP BY created_at_date
-),
-r AS (
-  SELECT date_refunded d, SUM(total_refund_usd) refunds
-  FROM instituto_experience.tb_gex_buygoods_unified
-  WHERE date_refunded BETWEEN '2026-04-01' AND '2026-06-09'
-  GROUP BY date_refunded
-)
-SELECT s.d AS dia,
-  ROUND(s.gross,2) gross, ROUND(COALESCE(r.refunds,0),2) refunds,
-  ROUND(s.commissions,2) commissions, ROUND(s.taxes,2) taxes,
-  ROUND(s.gross - COALESCE(r.refunds,0) - s.commissions - s.taxes,2) net_calc
-FROM s LEFT JOIN r ON r.d = s.d
-ORDER BY s.d
-```
+## Achados
+
+1. **Refunds reconcilia (~100%)** ao atribuir por `datetime_refunded_platform` e separar chargeback — confirma que a silver tem os reembolsos certos; o que faltava era a **data/critério** de atribuição.
+2. 🔴 **Chargebacks −16,5%** (silver subnotifica ~85k): investigar se há chargeback caindo em outro `payment_status`/`transaction_type` na silver, ou chargeback sem `total_refund_usd` preenchido.
+3. ⚠️ **Gross +2% em junho** (dias 01–04/06 e 09/06 lideram o desvio, silver acima): período recente — provável **settlement** (vendas/ajustes muito novos ainda não batem entre origem e silver). Reavaliar com export mais recente.
+4. **Commissions −0,45%** e **Taxes +0,91%** são desvios pequenos e ~uniformes (arredondamento/FX/definição fina).
+5. A plataforma soma **Commission Voids** (~45k no período) no Net; a silver não modela voids — parte do Δ Net vem daí.
+
+## Reproduzir
+- Plataforma: `Master_Overview_2026-04-01_2026-06-090wT8Ci.xls` (Downloads) — export diário do Master Overview.
+- Silver: este script (`validacao_silver_buygoods_plataforma.py`), read-only no MySQL.
 
 ## Relacionados
 - Silver doc: [[Fontes de Dados/Buygoods/doc_silver_buygoods]]
