@@ -10,10 +10,10 @@
   Refunds=`total_refund_usd` não-chargeback por `datetime_refunded_platform`; Chargebacks=refund de
   rows chargeback; Taxes=`iva_usd` approved. Net=Gross−Comm−Refunds−CB−Taxes (plataforma soma Commission Voids).
 - Resultado: **Refunds +0,05%** (reconcilia), Commissions −0,45%, Taxes +0,91%, Gross +0,38%.
-  **Achados:** 🔴 Chargebacks **−16,5%** (silver subnotifica; pior em abril −38%); ⚠️ Gross **+2% em junho**
-  (settlement do período recente). Diferença NÃO é uniforme — tem endereço.
-- Nota (de-para + total + por mês + por dia com Δ + achados) + gerador `.py` que lê Excel+MySQL:
-  `Operação/Validações/validacao-silver-buygoods-plataforma-2026-06-09.md`.
+  **Chargebacks**: incluído o `chargeback_fee` na definição (`total_refund_usd + chargeback_fee_usd`) →
+  desvio caiu de −16,5% para **−5,4%**. ⚠️ Gross **+2% no fim (junho)** = settlement do período recente.
+- Nota com **tabela por dia** (plataforma × silver lado a lado, 70 dias) + de-para + total + achados,
+  e gerador `.py` que lê Excel+MySQL: `Operação/Validações/validacao-silver-buygoods-plataforma-2026-06-09.md`.
 
 ## 2026-06-09 — INGEST (Operação: 7 fluxos N8N + 6 planilhas + linkagem com dashboards)
 - 1ª passada da pasta "Operação Obsidian" (OneDrive): criadas **7 notas de fluxo** em `Operação/N8N/`
