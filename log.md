@@ -3,6 +3,14 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-09 — QUERY (validação silver tb_gex_buygoods_unified × plataforma BuyGoods)
+- Reconciliação dos 5 KPIs do Master Overview (01/04→09/06, USD) contra a silver no MySQL. De-para
+  descoberto: Gross=`total_price_usd-iva_usd`; Refunds=`total_refund_usd` por **`date_refunded`**;
+  Commissions=`affiliate_amount_usd`; Taxes=`iva_usd` (approved). A silver bate **≤1,2%** por KPI
+  (Net calc +3,3% por ser resíduo). Resíduos = fuso de borda + atribuição de reembolso + FX.
+- Nota (por dia + total + Net calc + observações): `Operação/Validações/validacao-silver-buygoods-plataforma-2026-06-09.md`
+  + gerador `.py`. ⏳ fechar ao centavo com o Excel da conta master.
+
 ## 2026-06-09 — INGEST (Operação: 7 fluxos N8N + 6 planilhas + linkagem com dashboards)
 - 1ª passada da pasta "Operação Obsidian" (OneDrive): criadas **7 notas de fluxo** em `Operação/N8N/`
   (psyche: Chatwoot/Reembolso, Custos Tráfego, Dimensões Copys/Squads, SMS-Metas, Custos SMS;
