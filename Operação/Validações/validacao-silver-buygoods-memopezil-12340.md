@@ -19,8 +19,8 @@ tags: [validacao, reconciliacao, buygoods, silver, conta, memopezil]
 | Commissions | `affiliate_amount_usd` | ✅ reconcilia (~−0,6%) |
 | Sale Taxes | `iva_usd` | ✅ reconcilia (~−0,6%) |
 | Fees | `taxes_usd` | ✅ reconcilia (~−0,7%) |
-| Refunds | `total_refund_usd` (não-chargeback) | ⚠️ −12,6% — **lag de refunds recentes** (mai/jun) |
-| Chargebacks | `total_refund_usd + chargeback_fee_usd` (chargeback) | ⚠️ −7,7% (mesmo lag) |
+| Refunds | `total_refund_usd` (não-chargeback) | ⚠️ −12,6% — **quebra a partir de 26/05** (ver "Refunds por dia") |
+| Chargebacks | `total_refund_usd + chargeback_fee_usd` (chargeback) | ⚠️ −7,7% (mesma quebra) |
 | Sale Tax Refunds | `iva_usd` dos refunded | ⚠️ −7% (acompanha o refund/lag) |
 | Fee Voids | — | ❌ **não derivável** — a BuyGoods raramente estorna a fee (mantém a taxa) |
 | Commission Voids | — | ❌ **não derivável** — afiliado mantém a comissão; void é exceção |
@@ -41,7 +41,7 @@ tags: [validacao, reconciliacao, buygoods, silver, conta, memopezil]
 | Sale Tax Refunds | 223.744,12 | 208.184,89 | -15.559,23 | -6.95% |
 | Commission Voids | 5.639,05 | 1.490.144,84 | 1.484.505,79 | +26325.46% |
 
-> ✅ **Sale-side reconcilia** (Sales/Commissions/Sale Taxes/Fees ~−0,65% uniforme). ⚠️ **Refunds/Chargebacks** divergem por **lag dos estornos recentes** (mai/jun) ainda não totalmente ingeridos. ❌ **Voids** (Commission/Fee) não são deriváveis: dependem da política de void da BuyGoods (comissão/fee em geral **não** são estornadas), enquanto a silver só tem o valor original — por isso somar "afiliado/fee dos estornados" superestima o void.
+> ✅ **Sale-side reconcilia** (Sales/Commissions/Sale Taxes/Fees ~−0,65% uniforme). ⚠️ **Refunds/Chargebacks** divergem por uma **quebra na captura de estornos a partir de 26/05** (ver seção "Refunds por dia"). ❌ **Voids** (Commission/Fee) não são deriváveis: dependem da política de void da BuyGoods (comissão/fee em geral **não** são estornadas), enquanto a silver só tem o valor original — por isso somar "afiliado/fee dos estornados" superestima o void.
 
 ## Por dia — Δ silver − plataforma (USD)
 
@@ -108,11 +108,72 @@ tags: [validacao, reconciliacao, buygoods, silver, conta, memopezil]
 | 10/06 | 0,00 | -218,16 | 0,00 | 0,03 | -10.975,20 | -2.509,43 | 8.562,17 | -994,46 | 51.580,00 |
 | **Total** | **-146.886,21** | **-72.936,34** | **-9.293,64** | **-11.556,29** | **-431.288,95** | **-13.706,16** | **99.522,34** | **-15.559,23** | **1.484.505,79** |
 
+## Refunds por dia — plataforma × silver (USD)
+
+> Refunds atribuídos por `datetime_refunded_platform` (Excel D = silver D−1). **Reconcilia até 25/05 e despenca a partir de 26/05** — não é lag recente uniforme, é uma quebra com data.
+
+| Dia (Excel) | Plataforma | Silver | Δ | Δ% |
+|---|--:|--:|--:|--:|
+| 18/04 | 1.949,44 | 1.942,44 | -7,00 | -0.36% |
+| 20/04 | 417,14 | 415,14 | -2,00 | -0.48% |
+| 21/04 | 804,16 | 801,16 | -3,00 | -0.37% |
+| 22/04 | 868,49 | 865,49 | -3,00 | -0.35% |
+| 23/04 | 1.448,85 | 1.443,85 | -5,00 | -0.35% |
+| 24/04 | 6.273,89 | 6.249,89 | -24,00 | -0.38% |
+| 25/04 | 6.237,93 | 6.216,93 | -21,00 | -0.34% |
+| 26/04 | 10.869,09 | 10.829,09 | -40,00 | -0.37% |
+| 27/04 | 13.954,93 | 13.906,93 | -48,00 | -0.34% |
+| 28/04 | 16.612,70 | 16.499,21 | -113,49 | -0.68% |
+| 29/04 | 11.917,92 | 11.870,92 | -47,00 | -0.39% |
+| 30/04 | 14.623,69 | 14.939,69 | 316,00 | +2.16% |
+| 01/05 | 17.994,19 | 17.925,19 | -69,00 | -0.38% |
+| 02/05 | 61.006,68 | 60.797,68 | -209,00 | -0.34% |
+| 03/05 | 26.424,99 | 25.705,09 | -719,90 | -2.72% |
+| 04/05 | 21.985,49 | 21.909,49 | -76,00 | -0.35% |
+| 05/05 | 51.201,84 | 51.536,65 | 334,81 | +0.65% |
+| 06/05 | 45.824,29 | 45.658,29 | -166,00 | -0.36% |
+| 07/05 | 34.998,38 | 34.868,38 | -130,00 | -0.37% |
+| 08/05 | 47.267,22 | 47.086,22 | -181,00 | -0.38% |
+| 09/05 | 47.869,24 | 47.518,29 | -350,95 | -0.73% |
+| 10/05 | 33.309,24 | 33.198,24 | -111,00 | -0.33% |
+| 11/05 | 44.710,78 | 44.865,31 | 154,53 | +0.35% |
+| 12/05 | 73.211,59 | 72.953,06 | -258,53 | -0.35% |
+| 13/05 | 65.393,58 | 65.295,85 | -97,73 | -0.15% |
+| 14/05 | 95.838,31 | 95.730,36 | -107,95 | -0.11% |
+| 15/05 | 102.454,54 | 100.787,07 | -1.667,47 | -1.63% |
+| 16/05 | 97.591,99 | 97.955,96 | 363,97 | +0.37% |
+| 17/05 | 71.993,59 | 71.795,85 | -197,74 | -0.27% |
+| 18/05 | 71.044,83 | 70.850,70 | -194,13 | -0.27% |
+| 19/05 | 112.929,73 | 112.842,36 | -87,37 | -0.08% |
+| 20/05 | 100.750,13 | 100.445,42 | -304,71 | -0.30% |
+| 21/05 | 126.121,66 | 125.639,61 | -482,05 | -0.38% |
+| 22/05 | 119.635,82 | 119.404,38 | -231,44 | -0.19% |
+| 23/05 | 120.683,74 | 119.963,31 | -720,43 | -0.60% |
+| 24/05 | 75.424,90 | 75.267,77 | -157,13 | -0.21% |
+| 25/05 | 46.883,46 | 46.587,57 | -295,89 | -0.63% |
+| 26/05 | 84.428,44 | 58.391,42 | -26.037,02 | -30.84% |
+| 27/05 | 107.050,47 | 19.355,28 | -87.695,19 | -81.92% |
+| 28/05 | 132.352,11 | 22.568,36 | -109.783,75 | -82.95% |
+| 29/05 | 118.110,46 | 50.219,39 | -67.891,07 | -57.48% |
+| 30/05 | 117.968,62 | 96.401,49 | -21.567,13 | -18.28% |
+| 31/05 | 59.996,79 | 53.408,40 | -6.588,39 | -10.98% |
+| 01/06 | 47.056,97 | 33.984,27 | -13.072,70 | -27.78% |
+| 02/06 | 100.254,80 | 84.673,71 | -15.581,09 | -15.54% |
+| 03/06 | 121.532,35 | 108.647,37 | -12.884,98 | -10.60% |
+| 04/06 | 127.674,83 | 115.370,38 | -12.304,45 | -9.64% |
+| 05/06 | 126.408,31 | 112.944,32 | -13.463,99 | -10.65% |
+| 06/06 | 129.487,30 | 117.798,01 | -11.689,29 | -9.03% |
+| 07/06 | 65.778,84 | 60.402,82 | -5.376,02 | -8.17% |
+| 08/06 | 44.282,64 | 43.631,13 | -651,51 | -1.47% |
+| 09/06 | 114.226,97 | 104.459,40 | -9.767,57 | -8.55% |
+| 10/06 | 113.570,09 | 102.594,89 | -10.975,20 | -9.66% |
+| **Total** | **3.408.708,43** | **2.977.419,48** | **-431.288,95** | **-12.65%** |
+
 ## Observações
 
 1. **Alinhamento crítico:** o Excel rotula o dia **D** com dados de **D−1**; e a silver precisa ser lida pelo `datetime_platform`/`datetime_refunded_platform` (o `created_at_date` está +1h e desalinha dias movimentados).
 2. **Nomes "trocados" na silver:** o que a plataforma chama de **Commissions** (afiliado) é o `affiliate_amount_usd`; o **Amount** (líquido do vendor) é o `commission_usd`; e **Fees** (taxa BuyGoods) é o `taxes_usd`.
-3. **Refunds/Chargebacks têm lag:** o início do período bate, mas os estornos de **fim de maio/junho** estão subnotificados na silver (ex.: 28/05 plataforma 132k vs silver 22k) — o pipeline de refund ainda não terminou de ingerir os estornos recentes. Reavaliar com um snapshot mais novo.
+3. **Refunds: quebra com data (26/05), não lag uniforme.** A análise por dia mostra reconciliação **<1%/dia até 25/05** e um **despencar a partir de 26/05** (fundo em 27–29/05: silver pega ~18% dos refunds; ex.: 28/05 132k vs 22k), com recuperação parcial (~−10%) em junho. Como o pior NÃO é o período mais recente, **não é lag de ingestão** — é uma **degradação datada** na captura de estornos. ⚠️ Coincide com 26/05 (incidente Meta Ads) — possível causa comum na infra de ingestão, a confirmar.
 4. **Voids não são deriváveis da silver:** Commission Voids e Fee Voids dependem da **política da BuyGoods** (em geral comissão e fee NÃO são estornadas no refund). A plataforma reporta voids ~0; a silver só tem o valor original, então qualquer fórmula "imposto/fee/afiliado dos estornados" superestima.
 5. **Amount/Balance** não são comparáveis: incluem **allowances/holds** (reservas) lançados pela BuyGoods, que não existem na base transacional.
 

@@ -123,8 +123,8 @@ w('| Sales | `total_collected_usd` | ✅ reconcilia (~−0,7%) |')
 w('| Commissions | `affiliate_amount_usd` | ✅ reconcilia (~−0,6%) |')
 w('| Sale Taxes | `iva_usd` | ✅ reconcilia (~−0,6%) |')
 w('| Fees | `taxes_usd` | ✅ reconcilia (~−0,7%) |')
-w('| Refunds | `total_refund_usd` (não-chargeback) | ⚠️ −12,6% — **lag de refunds recentes** (mai/jun) |')
-w('| Chargebacks | `total_refund_usd + chargeback_fee_usd` (chargeback) | ⚠️ −7,7% (mesmo lag) |')
+w('| Refunds | `total_refund_usd` (não-chargeback) | ⚠️ −12,6% — **quebra a partir de 26/05** (ver "Refunds por dia") |')
+w('| Chargebacks | `total_refund_usd + chargeback_fee_usd` (chargeback) | ⚠️ −7,7% (mesma quebra) |')
 w('| Sale Tax Refunds | `iva_usd` dos refunded | ⚠️ −7% (acompanha o refund/lag) |')
 w('| Fee Voids | — | ❌ **não derivável** — a BuyGoods raramente estorna a fee (mantém a taxa) |')
 w('| Commission Voids | — | ❌ **não derivável** — afiliado mantém a comissão; void é exceção |')
@@ -144,7 +144,7 @@ for lbl, ec, sc in PAIRS:
     w(f'| {lbl} | {br(P)} | {br(S)} | {br(S-P)} | {pcl(S, P)} |')
 w('')
 w('> ✅ **Sale-side reconcilia** (Sales/Commissions/Sale Taxes/Fees ~−0,65% uniforme). ⚠️ **Refunds/Chargebacks** '
-  'divergem por **lag dos estornos recentes** (mai/jun) ainda não totalmente ingeridos. ❌ **Voids** (Commission/Fee) '
+  'divergem por uma **quebra na captura de estornos a partir de 26/05** (ver seção "Refunds por dia"). ❌ **Voids** (Commission/Fee) '
   'não são deriváveis: dependem da política de void da BuyGoods (comissão/fee em geral **não** são estornadas), '
   'enquanto a silver só tem o valor original — por isso somar "afiliado/fee dos estornados" superestima o void.')
 w('')
@@ -164,15 +164,34 @@ tline = ' | '.join(f"**{br(tots[lbl][1]-tots[lbl][0])}**" for lbl, _, _ in PAIRS
 w(f'| **Total** | {tline} |')
 w('')
 
+# refunds por dia (foco da investigação de lag)
+w('## Refunds por dia — plataforma × silver (USD)')
+w('')
+w('> Refunds atribuídos por `datetime_refunded_platform` (Excel D = silver D−1). **Reconcilia até 25/05 e '
+  'despenca a partir de 26/05** — não é lag recente uniforme, é uma quebra com data.')
+w('')
+w('| Dia (Excel) | Plataforma | Silver | Δ | Δ% |')
+w('|---|--:|--:|--:|--:|')
+for _, x in m.sort_values('d').iterrows():
+    P, S = x['Refunds'], x['refunds']
+    if P == 0 and S == 0:
+        continue
+    w(f"| {x['d'].strftime('%d/%m')} | {br(P)} | {br(S)} | {br(S-P)} | {pcl(S,P)} |")
+w(f"| **Total** | **{br(m['Refunds'].sum())}** | **{br(m['refunds'].sum())}** "
+  f"| **{br(m['refunds'].sum()-m['Refunds'].sum())}** | **{pcl(m['refunds'].sum(), m['Refunds'].sum())}** |")
+w('')
+
 w('## Observações')
 w('')
 w('1. **Alinhamento crítico:** o Excel rotula o dia **D** com dados de **D−1**; e a silver precisa ser lida pelo '
   '`datetime_platform`/`datetime_refunded_platform` (o `created_at_date` está +1h e desalinha dias movimentados).')
 w('2. **Nomes "trocados" na silver:** o que a plataforma chama de **Commissions** (afiliado) é o '
   '`affiliate_amount_usd`; o **Amount** (líquido do vendor) é o `commission_usd`; e **Fees** (taxa BuyGoods) é o `taxes_usd`.')
-w('3. **Refunds/Chargebacks têm lag:** o início do período bate, mas os estornos de **fim de maio/junho** '
-  'estão subnotificados na silver (ex.: 28/05 plataforma 132k vs silver 22k) — o pipeline de refund ainda '
-  'não terminou de ingerir os estornos recentes. Reavaliar com um snapshot mais novo.')
+w('3. **Refunds: quebra com data (26/05), não lag uniforme.** A análise por dia mostra reconciliação **<1%/dia '
+  'até 25/05** e um **despencar a partir de 26/05** (fundo em 27–29/05: silver pega ~18% dos refunds; ex.: 28/05 '
+  '132k vs 22k), com recuperação parcial (~−10%) em junho. Como o pior NÃO é o período mais recente, **não é lag '
+  'de ingestão** — é uma **degradação datada** na captura de estornos. ⚠️ Coincide com 26/05 (incidente Meta Ads) — '
+  'possível causa comum na infra de ingestão, a confirmar.')
 w('4. **Voids não são deriváveis da silver:** Commission Voids e Fee Voids dependem da **política da BuyGoods** '
   '(em geral comissão e fee NÃO são estornadas no refund). A plataforma reporta voids ~0; a silver só tem o '
   'valor original, então qualquer fórmula "imposto/fee/afiliado dos estornados" superestima.')
