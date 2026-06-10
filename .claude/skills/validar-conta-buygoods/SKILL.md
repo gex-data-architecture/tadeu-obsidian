@@ -23,8 +23,9 @@ Entrega de-para, **total campo a campo**, **por dia** (Δ de cada campo) e **Ref
 | Fees | `taxes_usd` | ✅ (taxa BuyGoods) |
 | Refunds | `total_refund_usd` (não-cbk) | por `datetime_refunded_platform` |
 | Chargebacks | `total_refund_usd + chargeback_fee_usd` (cbk) | idem |
-| Sale Tax Refunds | `iva_usd` dos refunded | idem |
-| Fee Voids / Commission Voids | — | ❌ **não deriváveis** (política de void; comissão/fee em geral não estornam) |
+| Fee Voids | `taxes_usd × (total_refund/total_collected)` | ✅ proporcional (a BuyGoods estorna fee; cheio superestima parciais) |
+| Sale Tax Refunds | `iva_usd × (total_refund/total_collected)` | ⚠️ proporcional (~5% de resíduo) |
+| Commission Voids | — | ❌ **não derivável** — afiliado mantém a comissão (estorno é exceção) |
 | Amount / Balance | — | ⛔ settlement (allowances/holds), não-transacional |
 
 > **Amount** (líquido do vendor) corresponde ao `commission_usd` da silver — nome trocado —, mas no extrato

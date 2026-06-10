@@ -78,12 +78,13 @@ sale = q(f"""SELECT LEFT(datetime_platform,10) d,
  FROM instituto_experience.tb_gex_buygoods_unified
  WHERE account_id='{ACC}' AND LEFT(datetime_platform,10) BETWEEN '{INI}' AND '{FIM}'
  GROUP BY LEFT(datetime_platform,10)""")
+# Fee Voids e Sale Tax Refunds: PROPORCIONAL ao que foi estornado (refund parcial só devolve parte
+# da fee/imposto). frac = total_refund_usd / total_collected_usd. O valor "cheio" superestima parciais.
 refd = q(f"""SELECT LEFT(datetime_refunded_platform,10) d,
   SUM(CASE WHEN NOT cbk THEN total_refund_usd ELSE 0 END) refunds,
   SUM(CASE WHEN cbk THEN total_refund_usd+chargeback_fee_usd ELSE 0 END) chargebacks,
-  SUM(CASE WHEN NOT cbk THEN affiliate_amount_usd ELSE 0 END) commission_voids,
-  SUM(CASE WHEN NOT cbk THEN taxes_usd ELSE 0 END) fee_voids,
-  SUM(CASE WHEN NOT cbk THEN iva_usd ELSE 0 END) sale_tax_refunds
+  SUM(CASE WHEN NOT cbk THEN taxes_usd*(total_refund_usd/NULLIF(total_collected_usd,0)) ELSE 0 END) fee_voids,
+  SUM(CASE WHEN NOT cbk THEN iva_usd*(total_refund_usd/NULLIF(total_collected_usd,0)) ELSE 0 END) sale_tax_refunds
  FROM (SELECT *, (payment_status='chargeback' OR transaction_type='Chargeback') cbk
        FROM instituto_experience.tb_gex_buygoods_unified WHERE account_id='{ACC}') t
  WHERE LEFT(datetime_refunded_platform,10) BETWEEN '{INI}' AND '{FIM}'
@@ -93,7 +94,7 @@ for df in (s, r):
     df['d'] = pd.to_datetime(df['d']).dt.date
 for c in ['sales', 'sale_taxes', 'fees', 'commissions']:
     s[c] = s[c].astype(float)
-for c in ['refunds', 'chargebacks', 'commission_voids', 'fee_voids', 'sale_tax_refunds']:
+for c in ['refunds', 'chargebacks', 'fee_voids', 'sale_tax_refunds']:
     r[c] = r[c].astype(float)
 
 m = e.merge(s, left_on='sd', right_on='d', how='left', suffixes=('', '_s')) \
@@ -102,7 +103,7 @@ m = e.merge(s, left_on='sd', right_on='d', how='left', suffixes=('', '_s')) \
 PAIRS = [('Sales', 'Sales', 'sales'), ('Commissions', 'Commissions', 'commissions'),
          ('Sale Taxes', 'Sale Taxes', 'sale_taxes'), ('Fees', 'Fees', 'fees'),
          ('Refunds', 'Refunds', 'refunds'), ('Chargebacks', 'Chargebacks', 'chargebacks'),
-         ('Sale Tax Refunds', 'Sale Tax Refunds', 'sale_tax_refunds')]
+         ('Fee Voids', 'Fee Voids', 'fee_voids'), ('Sale Tax Refunds', 'Sale Tax Refunds', 'sale_tax_refunds')]
 
 
 def br(v):
@@ -139,12 +140,12 @@ DEPARA = [('Sales', 'total_collected_usd', 'Sales'), ('Commissions', 'affiliate_
           ('Sale Taxes', 'iva_usd', 'Sale Taxes'), ('Fees', 'taxes_usd', 'Fees'),
           ('Refunds', 'total_refund_usd (não-cbk)', 'Refunds'),
           ('Chargebacks', 'total_refund_usd + chargeback_fee_usd (cbk)', 'Chargebacks'),
-          ('Sale Tax Refunds', 'iva_usd dos refunded', 'Sale Tax Refunds')]
+          ('Fee Voids', 'taxes_usd × (total_refund/total_collected)', 'Fee Voids'),
+          ('Sale Tax Refunds', 'iva_usd × (total_refund/total_collected)', 'Sale Tax Refunds')]
 for ec, sv, key in DEPARA:
     P, S = tots[key]
     w(f'| {ec} | `{sv}` | {pcl(S, P)} |')
-w('| Fee Voids | — | ❌ não derivável (BuyGoods raramente estorna a fee) |')
-w('| Commission Voids | — | ❌ não derivável (afiliado mantém a comissão) |')
+w('| Commission Voids | — | ❌ não derivável — afiliado mantém a comissão (estorno é exceção) |')
 w('| Amount / Balance | — | ⛔ settlement (allowances/holds) |')
 w('| JV% / Alerts / Shipping / Product Notes | — | ⛔ meta / sem dado financeiro |')
 w('')
@@ -188,8 +189,9 @@ if brk:
       'a partir dessa data.')
 else:
     w('3. **Refunds** reconciliam sem quebra de data relevante no período.')
-w('4. **Voids não são deriváveis:** Commission/Fee Voids dependem da política de void da BuyGoods (comissão/fee em '
-  'geral NÃO são estornadas); a silver só tem o valor original.')
+w('4. **Fee Voids e Sale Tax Refunds são proporcionais:** a BuyGoods estorna fee e imposto, mas em refund '
+  'parcial só a parte estornada (`× total_refund/total_collected`) — somar o valor cheio superestima. '
+  '**Commission Voids** é a exceção: o afiliado MANTÉM a comissão (estorno é raríssimo), então não é derivável.')
 w('5. **Amount/Balance** = settlement (incluem allowances/holds), fora da base transacional.')
 w('')
 w('## Reproduzir')
