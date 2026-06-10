@@ -3,6 +3,14 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-10 — QUERY (validação conta Slimtide 12501 — refunds OK, problema é do Memopezil)
+- Rodada a skill `validar-conta-buygoods` no Slimtide (12501): sale-side ~−0,05%, **Refunds −0,79% SEM quebra**
+  (auto-detector: None), Chargebacks 0%. → O furo de estornos é **específico do Memopezil (12340)**, não falha
+  geral do pipeline (bate com o agregado da plataforma reconciliando +0,05%). Provável: estornos do Memopezil
+  faltando/mal-atribuídos só naquela conta.
+- Skill endurecida: **detecção automática da linha de cabeçalho** (export do Slimtide tem preâmbulo
+  Transactions/Criteria/Date Range antes do header). Nota: `Operação/Validações/validacao-conta-buygoods-12501.md`.
+
 ## 2026-06-10 — SKILL (2 skills de validação BuyGoods: plataforma e conta)
 - Criadas **`validar-plataforma-buygoods`** (silver × Master Overview agregado; total + por dia) e
   **`validar-conta-buygoods`** (silver × extrato "Transactions" por `account_id`; campo a campo, total + por dia,

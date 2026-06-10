@@ -42,7 +42,14 @@ if not XLS or not os.path.isfile(XLS):
 ACC = sys.argv[2] if len(sys.argv) > 2 else os.path.splitext(os.path.basename(XLS))[0].split('_')[-1]
 
 eng = 'xlrd' if XLS.lower().endswith('.xls') else 'openpyxl'
-e = pd.read_excel(XLS, engine=eng, header=0)
+# alguns exports têm linhas de preâmbulo (Transactions/Criteria/Date Range) antes do cabeçalho real:
+# detecta a linha que contém a coluna 'Date'.
+_raw = pd.read_excel(XLS, engine=eng, header=None)
+_hdr = next((i for i in range(min(15, len(_raw)))
+             if 'Date' in [str(v).strip() for v in _raw.iloc[i].tolist()]), None)
+if _hdr is None:
+    sys.exit('Cabeçalho não encontrado (nenhuma linha com a coluna "Date").')
+e = pd.read_excel(XLS, engine=eng, header=_hdr)
 e.columns = [str(c).strip() for c in e.columns]
 e['d'] = pd.to_datetime(e['Date']).dt.normalize()
 ECOLS = ['Sales', 'Commissions', 'Refunds', 'Chargebacks', 'Commissions Voids', 'Fee Voids',
