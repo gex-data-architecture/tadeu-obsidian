@@ -3,6 +3,17 @@
 > Registro **append-only** (só adicionar no topo). Cada entrada: data, operação
 > (INGEST / QUERY / LINT / EDIT) e o que mudou. Padrão LLM Wiki.
 
+## 2026-06-10 — QUERY (validação silver × extrato BuyGoods por CONTA — Memopezil 12340, campo a campo)
+- Validação completa, campo a campo, da silver para `account_id=12340` contra o extrato diário da plataforma
+  (Excel). Alinhamento: **Excel(D)=silver(D−1)** na base `datetime_platform`/`datetime_refunded_platform`.
+- **De-para fechado** (nomes "trocados" na silver): Sales=`total_collected_usd`; Commissions=`affiliate_amount_usd`;
+  Amount=`commission_usd`; Fees=`taxes_usd`; Sale Taxes=`iva_usd`; Refunds=`total_refund_usd`(não-cbk);
+  Chargebacks=`total_refund_usd+chargeback_fee_usd`.
+- **Resultado:** sale-side reconcilia (~−0,65% uniforme). ⚠️ Refunds −12,6% / Chargebacks −7,7% por **lag de
+  estornos recentes** (mai/jun) — início do período bate. ❌ Commission/Fee **Voids não são deriváveis** (dependem
+  da política de void da BuyGoods; comissão/fee em geral não são estornadas). Amount/Balance = settlement (allowances).
+- Nota + gerador `.py` (lê Excel+MySQL): `Operação/Validações/validacao-silver-buygoods-memopezil-12340.md`.
+
 ## 2026-06-09 — QUERY (validação silver tb_gex_buygoods_unified × plataforma BuyGoods — DIÁRIA)
 - Reconciliação **dia a dia** com o **export diário** do Master Overview (Excel, 01/04→09/06, USD),
   alinhada pelo **timestamp da plataforma** (`datetime_platform`/`datetime_refunded_platform`).
