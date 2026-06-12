@@ -2,7 +2,7 @@
 tipo: step-function
 ambiente: prod
 sfn_type: STANDARD
-ultima_execucao: 2026-06-03 13:05
+ultima_execucao: 2026-06-12 09:05
 ultimo_estado: SUCCEEDED
 tags: [datalake, step-function, orquestracao]
 ---
@@ -49,14 +49,14 @@ tags: [datalake, step-function, orquestracao]
 
 | Início | Estado |
 |---|---|
-| 2026-06-03 13:05 | SUCCEEDED |
-| 2026-06-03 11:05 | SUCCEEDED |
-| 2026-06-03 09:05 | SUCCEEDED |
-| 2026-06-03 07:05 | SUCCEEDED |
-| 2026-06-03 05:05 | SUCCEEDED |
-| 2026-06-03 03:05 | SUCCEEDED |
-| 2026-06-03 01:05 | SUCCEEDED |
-| 2026-06-02 23:05 | SUCCEEDED |
+| 2026-06-12 09:05 | SUCCEEDED |
+| 2026-06-12 07:05 | SUCCEEDED |
+| 2026-06-12 05:05 | SUCCEEDED |
+| 2026-06-12 03:05 | SUCCEEDED |
+| 2026-06-12 01:05 | SUCCEEDED |
+| 2026-06-11 23:05 | SUCCEEDED |
+| 2026-06-11 21:05 | SUCCEEDED |
+| 2026-06-11 19:05 | SUCCEEDED |
 
 ## Definição (Amazon States Language)
 

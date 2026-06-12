@@ -4,7 +4,7 @@ ambiente: prod
 fluxo: mysql-to-bronze
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-03 02:30
+ultima_execucao: 2026-06-12 02:30
 ultimo_estado: SUCCEEDED
 tags: [datalake, glue-job]
 ---
@@ -42,14 +42,14 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
-| 2026-06-03 02:30 | SUCCEEDED | 1m7s | — |
-| 2026-06-02 02:30 | SUCCEEDED | 1m7s | — |
-| 2026-06-01 02:30 | SUCCEEDED | 1m9s | — |
-| 2026-05-31 02:30 | SUCCEEDED | 1m12s | — |
-| 2026-05-30 02:30 | SUCCEEDED | 1m15s | — |
-| 2026-05-29 02:30 | SUCCEEDED | 1m15s | — |
-| 2026-05-28 02:30 | SUCCEEDED | 1m15s | — |
-| 2026-05-27 02:30 | SUCCEEDED | 1m7s | — |
+| 2026-06-12 02:30 | SUCCEEDED | 1m22s | — |
+| 2026-06-11 02:30 | SUCCEEDED | 1m12s | — |
+| 2026-06-10 02:30 | SUCCEEDED | 1m53s | — |
+| 2026-06-09 02:30 | SUCCEEDED | 1m11s | — |
+| 2026-06-08 02:30 | SUCCEEDED | 1m12s | — |
+| 2026-06-07 02:30 | SUCCEEDED | 1m27s | — |
+| 2026-06-06 02:30 | SUCCEEDED | 1m20s | — |
+| 2026-06-05 02:30 | SUCCEEDED | 1m24s | — |
 
 ## Script
 

@@ -24,7 +24,7 @@ tags: [datalake, silver, prod]
 | Tipo | EXTERNAL_TABLE |
 | Partições | dt_proc |
 | Nº colunas | 58 |
-| Atualizada em | 2026-06-03 13:43:15-03:00 |
+| Atualizada em | 2026-06-12 09:49:06-03:00 |
 
 ## Colunas
 

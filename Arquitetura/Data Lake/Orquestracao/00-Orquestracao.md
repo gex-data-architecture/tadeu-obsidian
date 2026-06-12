@@ -5,7 +5,7 @@ tags: [datalake, orquestracao, step-function]
 ---
 # 🔗 Orquestração do Data Lake (Step Functions + EventBridge)
 
-> **20 Step Functions**, **17 crawlers** e **49 agendamentos**. As SFN rodam jobs/crawlers em sequência;
+> **23 Step Functions**, **25 crawlers** e **50 agendamentos**. As SFN rodam jobs/crawlers em sequência;
 > o encadeamento **entre** SFNs é por **regras EventBridge** (quando um job conclui `SUCCEEDED`, inicia a próxima SFN);
 > e as cadeias **começam** por **agendamentos** (cron/rate) — ver seção *Agendamentos*.
 > **Não editar à mão** — regerável pela skill `catalogo-datalake`.
@@ -19,12 +19,18 @@ tags: [datalake, orquestracao, step-function]
     - [[gex-buygoods-unified-to-mysql-prod]]
       - ▶️ job [[gex-buygoods-unified-to-mysql-prod]] `SUCCEEDED` ⟶
         - [[gex-buygoods-gold-prod]]
+          - ▶️ job [[gex-buygoods-gold-prod]] `SUCCEEDED` ⟶
+            - [[gex-gold-clickbank-buygoods-prod]]
+              - ▶️ job [[gex-gold-clickbank-buygoods-prod]] `SUCCEEDED` ⟶
+                - [[gex-affiliate-nutra-prod]]
   - ▶️ job [[bronze-to-silver-buygoods-prod]] `SUCCEEDED` ⟶
     - [[gex-silver-to-mysql-buygoods-prod]]
 
 - [[gex-bronze-to-silver-clickbank-prod]]
   - ▶️ job [[gex-bronze-to-silver-prod]] `SUCCEEDED` ⟶
     - [[gex-silver-gold-to-mysql-clickbank-prod]]
+
+- [[gex-cartpanda-bronze-prod]]
 
 - [[gex-clickbank-config-daily-develop]]
 
@@ -58,14 +64,17 @@ tags: [datalake, orquestracao, step-function]
 
 ```mermaid
 flowchart TD
+  gex_affiliate_nutra_prod["gex-affiliate-nutra-prod"]
   gex_bronze_to_silver_buygoods_prod["gex-bronze-to-silver-buygoods-prod"]
   gex_bronze_to_silver_clickbank_prod["gex-bronze-to-silver-clickbank-prod"]
   gex_buygoods_gold_prod["gex-buygoods-gold-prod"]
   gex_buygoods_unified_to_mysql_prod["gex-buygoods-unified-to-mysql-prod"]
+  gex_cartpanda_bronze_prod["gex-cartpanda-bronze-prod"]
   gex_clickbank_config_daily_develop["gex-clickbank-config-daily-develop"]
   gex_clickbank_config_daily_prod["gex-clickbank-config-daily-prod"]
   gex_clickbank_ingestion_old_develop["gex-clickbank-ingestion-old-develop"]
   gex_clickbank_ingestion_old_prod["gex-clickbank-ingestion-old-prod"]
+  gex_gold_clickbank_buygoods_prod["gex-gold-clickbank-buygoods-prod"]
   gex_gold_dashboard_channels_marketing_develop["gex-gold-dashboard-channels-marketing-develop"]
   gex_gold_dashboard_channels_marketing_prod["gex-gold-dashboard-channels-marketing-prod"]
   gex_gold_to_mysql_channels_marketing_develop["gex-gold-to-mysql-channels-marketing-develop"]
@@ -81,7 +90,9 @@ flowchart TD
   gex_bronze_to_silver_buygoods_prod -->|bronze-to-silver-buygoods-prod ✓| gex_buygoods_unified_to_mysql_prod
   gex_bronze_to_silver_buygoods_prod -->|bronze-to-silver-buygoods-prod ✓| gex_silver_to_mysql_buygoods_prod
   gex_bronze_to_silver_clickbank_prod -->|gex-bronze-to-silver-prod ✓| gex_silver_gold_to_mysql_clickbank_prod
+  gex_buygoods_gold_prod -->|gex-buygoods-gold-prod ✓| gex_gold_clickbank_buygoods_prod
   gex_buygoods_unified_to_mysql_prod -->|gex-buygoods-unified-to-mysql-prod ✓| gex_buygoods_gold_prod
+  gex_gold_clickbank_buygoods_prod -->|gex-gold-clickbank-buygoods-prod ✓| gex_affiliate_nutra_prod
 ```
 
 ## Alertas de falha (EventBridge → SNS)
@@ -90,7 +101,7 @@ flowchart TD
 
 ## Agendamentos (EventBridge)
 
-> 49 agendamento(s) — **21 ativo(s)**, 28 desabilitado(s). Horário em **UTC** salvo indicação de timezone. Estes são os gatilhos que iniciam as cadeias na hora marcada.
+> 50 agendamento(s) — **22 ativo(s)**, 28 desabilitado(s). Horário em **UTC** salvo indicação de timezone. Estes são os gatilhos que iniciam as cadeias na hora marcada.
 
 | Status | Agendamento | Quando | Expressão | Dispara | Origem |
 |---|---|---|---|---|---|
@@ -101,6 +112,7 @@ flowchart TD
 | 🟢 ativo | `gex-bronze-to-silver-15min-prod` | todo dia a cada 2h (no min 05) UTC | `cron(5 */2 * * ? *)` | [[gex-bronze-to-silver-clickbank-prod]] | scheduler/default |
 | 🟢 ativo | `gex-bronze-to-silver-buygoods-2h-prod` | todo dia a cada 2h (no min 30) UTC | `cron(30 0/2 * * ? *)` | [[gex-bronze-to-silver-buygoods-prod]] | scheduler/default |
 | 🟢 ativo | `gex-buygoods-api-polling-daily-develop` | a cada 1 day | `rate(1 day)` | `lambda:gex-buygoods-api-polling-develop` | rule |
+| 🟢 ativo | `gex-cartpanda-bronze-daily-prod` | todo dia às 06:00 UTC | `cron(0 6 * * ? *)` | [[gex-cartpanda-bronze-prod]] | scheduler/default |
 | 🟢 ativo | `gex-clickbank-config-daily-timer-prod` | todo dia às 01:00 UTC | `cron(0 1 * * ? *)` | [[gex-clickbank-config-daily-prod]] | scheduler/default |
 | 🟢 ativo | `gex-clickbank-glue-processing-prod` | todo dia a cada 15 min a partir do min 10 UTC | `cron(10/15 * * * ? *)` | [[gex-landing-to-bronze-new-prod]] | scheduler/default |
 | 🟢 ativo | `gex-docs-dev-extractor-schedule` | seg às 09:00 UTC | `cron(0 9 ? * MON *)` | [[gex-docs-dev-extractor]] | scheduler/default |
@@ -146,13 +158,21 @@ flowchart TD
 
 ## Crawlers
 
+- [[gex-affiliate-nutra-crawler-develop]] → `gex_db_develop_gold` (—)
+- [[gex-affiliate-nutra-crawler-prod]] → `gex_db_prod_gold` (SUCCEEDED)
 - [[gex-bronze-buygoods-api-crawler-develop]] → `gex_db_develop_bronze` (SUCCEEDED)
 - [[gex-bronze-buygoods-api-crawler-prod]] → `gex_db_prod_bronze` (SUCCEEDED)
 - [[gex-bronze-crawler-develop]] → `gex_db_develop_bronze` (SUCCEEDED)
 - [[gex-bronze-crawler-prod]] → `gex_db_prod_bronze` (SUCCEEDED)
 - [[gex-buygoods-gold-crawler-develop]] → `gex_db_develop_gold` (—)
 - [[gex-buygoods-gold-crawler-prod]] → `gex_db_prod_gold` (SUCCEEDED)
+- [[gex-buygoods-orders-bronze-crawler-develop]] → `gex_db_develop_bronze` (—)
+- [[gex-buygoods-orders-bronze-crawler-prod]] → `gex_db_prod_bronze` (—)
 - [[gex-buygoods-orders-silver-crawler-prod]] → `gex_db_prod_silver` (SUCCEEDED)
+- [[gex-cartpanda-bronze-crawler-develop]] → `gex_db_develop_bronze` (—)
+- [[gex-cartpanda-bronze-crawler-prod]] → `gex_db_prod_bronze` (SUCCEEDED)
+- [[gex-gold-clickbank-buygoods-crawler-develop]] → `gex_db_develop_gold` (—)
+- [[gex-gold-clickbank-buygoods-crawler-prod]] → `gex_db_prod_gold` (SUCCEEDED)
 - [[gex-gold-crawler-develop]] → `gex_db_develop_gold` (SUCCEEDED)
 - [[gex-gold-crawler-prod]] → `gex_db_prod_gold` (SUCCEEDED)
 - [[gex-gold-dashboard-channels-marketing-crawler-develop]] → `gex_db_develop_gold` (—)

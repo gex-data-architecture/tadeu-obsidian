@@ -4,7 +4,7 @@ ambiente: prod
 fluxo: to-mysql
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-03 11:41
+ultima_execucao: 2026-06-12 09:48
 ultimo_estado: SUCCEEDED
 tags: [datalake, glue-job]
 ---
@@ -44,14 +44,14 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
-| 2026-06-03 11:41 | SUCCEEDED | 1m57s | — |
-| 2026-06-03 09:41 | SUCCEEDED | 1m44s | — |
-| 2026-06-03 07:39 | SUCCEEDED | 1m46s | — |
-| 2026-06-03 05:41 | SUCCEEDED | 1m59s | — |
-| 2026-06-03 03:40 | SUCCEEDED | 2m19s | — |
-| 2026-06-03 01:40 | SUCCEEDED | 1m57s | — |
-| 2026-06-02 23:41 | FAILED | 1m8s | Error Category: QUERY_ERROR; Failed Line Number: 185; Spark Error Class: MISSING_COLUMN; AnalysisException: Column 'tran… |
-| 2026-06-02 21:44 | FAILED | 1m41s | Error Category: UNCLASSIFIED_ERROR; Failed Line Number: 230; RuntimeError: Source snapshot looks incomplete vs current M… |
+| 2026-06-12 09:48 | SUCCEEDED | 2m26s | — |
+| 2026-06-12 07:46 | SUCCEEDED | 2m28s | — |
+| 2026-06-12 05:46 | FAILED | 1m30s | Error Category: UNCLASSIFIED_ERROR; Failed Line Number: 191; RuntimeError: Source row count below threshold. source_coun… |
+| 2026-06-12 01:45 | SUCCEEDED | 2m29s | — |
+| 2026-06-11 23:46 | SUCCEEDED | 1m47s | — |
+| 2026-06-11 21:51 | SUCCEEDED | 1m45s | — |
+| 2026-06-11 19:46 | SUCCEEDED | 2m14s | — |
+| 2026-06-11 17:49 | SUCCEEDED | 1m55s | — |
 
 ## Script
 

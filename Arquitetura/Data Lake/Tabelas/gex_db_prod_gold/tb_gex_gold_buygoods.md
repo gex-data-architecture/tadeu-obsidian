@@ -24,7 +24,7 @@ tags: [datalake, gold, prod]
 | Tipo | EXTERNAL_TABLE |
 | Partições | created_at_date |
 | Nº colunas | 74 |
-| Atualizada em | 2026-06-03 14:04:55-03:00 |
+| Atualizada em | 2026-06-12 10:01:56-03:00 |
 
 ## Colunas
 

@@ -24,7 +24,7 @@ tags: [datalake, bronze, prod]
 | Tipo | EXTERNAL_TABLE |
 | Partições | dt_proc |
 | Nº colunas | 6 |
-| Atualizada em | 2026-06-02 22:04:18-03:00 |
+| Atualizada em | 2026-06-11 22:04:13-03:00 |
 
 ## Colunas
 

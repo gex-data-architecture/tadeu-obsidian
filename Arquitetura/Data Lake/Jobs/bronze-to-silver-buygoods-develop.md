@@ -498,14 +498,17 @@ payment_status_expr = (
     .otherwise(F.lit("approved"))
 )
 
+# Ajuste: subtrai tambem o total_refund_usd nos ciclos de devolucao/chargeback.
+#   refunded/refunded_partial: total_amount_charged - aff_commission - total_refund_usd - refund_fee
+#   chargeback:                total_amount_charged - aff_commission - chargeback_fee - total_refund_usd
 commission_usd_expr = (
     F.when(
         payment_status_expr == "chargeback",
-        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - F.coalesce(F.col("chargeback_fee_usd_raw"), F.lit(0.0)),  # AJUSTE
+        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - F.coalesce(F.col("chargeback_fee_usd_raw"), F.lit(0.0)) - F.coalesce(total_refund_usd_corrected_expr, F.lit(0.0)),  # AJUSTE
     )
     .when(
         payment_status_expr.isin("refunded", "refunded_partial"),
-        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - refund_fee_usd_expr,  # AJUSTE
+        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - F.coalesce(total_refund_usd_corrected_expr, F.lit(0.0)) - refund_fee_usd_expr,  # AJUSTE
     )
     .otherwise(
         F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.coalesce(F.col("merchant_commission"), F.lit(0.0)) - F.coalesce(F.col("aff_commission"), F.lit(0.0))  # AJUSTE

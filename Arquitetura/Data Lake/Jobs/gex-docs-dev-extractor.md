@@ -4,7 +4,7 @@ ambiente:
 fluxo: 
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-01 06:00
+ultima_execucao: 2026-06-08 06:00
 ultimo_estado: SUCCEEDED
 tags: [datalake, glue-job]
 ---
@@ -43,6 +43,7 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
+| 2026-06-08 06:00 | SUCCEEDED | 2m5s | — |
 | 2026-06-01 06:00 | SUCCEEDED | 1m59s | — |
 | 2026-05-25 06:00 | SUCCEEDED | 1m47s | — |
 | 2026-05-18 06:00 | SUCCEEDED | 1m40s | — |
@@ -50,7 +51,6 @@ tags: [datalake, glue-job]
 | 2026-05-15 12:11 | SUCCEEDED | 1m13s | — |
 | 2026-05-14 20:37 | SUCCEEDED | 1m2s | — |
 | 2026-05-14 20:32 | STOPPED | 3m35s | — |
-| 2026-05-14 20:27 | SUCCEEDED | 24s | — |
 
 ## Script
 

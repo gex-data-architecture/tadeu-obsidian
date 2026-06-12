@@ -4,7 +4,7 @@ ambiente: prod
 fluxo: landing-to-bronze
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-03 13:30
+ultima_execucao: 2026-06-12 09:30
 ultimo_estado: SUCCEEDED
 tags: [datalake, glue-job]
 ---
@@ -42,14 +42,14 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
-| 2026-06-03 13:30 | SUCCEEDED | 4m1s | — |
-| 2026-06-03 13:10 | SUCCEEDED | 3m25s | — |
-| 2026-06-03 11:30 | SUCCEEDED | 3m19s | — |
-| 2026-06-03 09:30 | SUCCEEDED | 3m43s | — |
-| 2026-06-03 07:30 | SUCCEEDED | 3m2s | — |
-| 2026-06-03 05:30 | SUCCEEDED | 3m41s | — |
-| 2026-06-03 03:30 | SUCCEEDED | 3m1s | — |
-| 2026-06-03 01:30 | SUCCEEDED | 3m29s | — |
+| 2026-06-12 09:30 | SUCCEEDED | 3m5s | — |
+| 2026-06-12 07:30 | SUCCEEDED | 2m34s | — |
+| 2026-06-12 05:30 | SUCCEEDED | 2m27s | — |
+| 2026-06-12 03:30 | SUCCEEDED | 2m31s | — |
+| 2026-06-12 01:30 | SUCCEEDED | 2m22s | — |
+| 2026-06-11 23:30 | SUCCEEDED | 2m24s | — |
+| 2026-06-11 21:30 | SUCCEEDED | 2m47s | — |
+| 2026-06-11 19:30 | SUCCEEDED | 3m17s | — |
 
 ## Script
 

@@ -4,8 +4,8 @@ ambiente: prod
 fluxo: 
 tipo_job: pythonshell
 glue_version: 5.1
-ultima_execucao: 2026-06-01 15:00
-ultimo_estado: STOPPED
+ultima_execucao: 2026-06-12 02:00
+ultimo_estado: SUCCEEDED
 tags: [datalake, glue-job]
 ---
 
@@ -46,6 +46,10 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
+| 2026-06-12 02:00 | SUCCEEDED | 1h48m | — |
+| 2026-06-11 08:07 | SUCCEEDED | 2h11m | — |
+| 2026-06-10 17:15 | STOPPED | 1h22m | — |
+| 2026-06-10 17:12 | STOPPED | — | — |
 | 2026-06-01 15:00 | STOPPED | 12m16s | — |
 | 2026-06-01 13:35 | FAILED | 48m47s | Command failed with exit code 1 |
 

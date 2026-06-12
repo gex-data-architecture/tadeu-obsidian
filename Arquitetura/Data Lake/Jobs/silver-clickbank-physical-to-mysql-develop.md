@@ -4,7 +4,7 @@ ambiente: develop
 fluxo: to-mysql
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-03 14:20
+ultima_execucao: 2026-06-12 09:50
 ultimo_estado: FAILED
 tags: [datalake, glue-job]
 ---
@@ -44,14 +44,14 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
-| 2026-06-03 14:20 | FAILED | 40s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
-| 2026-06-03 13:50 | FAILED | 44s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
-| 2026-06-03 13:35 | FAILED | 50s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
-| 2026-06-03 13:20 | FAILED | 38s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
-| 2026-06-03 12:50 | FAILED | 37s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
-| 2026-06-03 12:35 | FAILED | 51s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
-| 2026-06-03 12:20 | FAILED | 37s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
-| 2026-06-03 11:50 | FAILED | 37s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 09:50 | FAILED | 44s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 09:35 | FAILED | 46s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 09:20 | FAILED | 46s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 08:50 | FAILED | 44s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 08:35 | FAILED | 50s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 08:20 | FAILED | 44s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 07:50 | FAILED | 48s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
+| 2026-06-12 07:35 | FAILED | 1m10s | Error Category: RESOURCE_NOT_FOUND_ERROR; Failed Line Number: 193; An error occurred while calling o110.getCatalogSource… |
 
 ## Script
 

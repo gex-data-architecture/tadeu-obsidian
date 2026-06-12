@@ -2,7 +2,7 @@
 tipo: step-function
 ambiente: prod
 sfn_type: STANDARD
-ultima_execucao: 2026-06-03 13:48
+ultima_execucao: 2026-06-12 09:51
 ultimo_estado: SUCCEEDED
 tags: [datalake, step-function, orquestracao]
 ---
@@ -32,6 +32,9 @@ tags: [datalake, step-function, orquestracao]
 **Disparada quando:**
 - job [[gex-buygoods-unified-to-mysql-prod]] = `SUCCEEDED` (via regra EventBridge) ⟶ origem provável: [[gex-buygoods-unified-to-mysql-prod]]
 
+**Ao terminar, dispara:**
+- quando job [[gex-buygoods-gold-prod]] conclui `SUCCEEDED` ⟶ inicia [[gex-gold-clickbank-buygoods-prod]]
+
 ## Dispara (alvos)
 
 - **Jobs:** [[gex-buygoods-gold-prod]]
@@ -44,14 +47,14 @@ tags: [datalake, step-function, orquestracao]
 
 | Início | Estado |
 |---|---|
-| 2026-06-03 13:48 | SUCCEEDED |
-| 2026-06-03 13:28 | SUCCEEDED |
-| 2026-06-03 11:48 | SUCCEEDED |
-| 2026-06-03 09:48 | SUCCEEDED |
-| 2026-06-03 07:47 | SUCCEEDED |
-| 2026-06-03 05:48 | SUCCEEDED |
-| 2026-06-03 03:50 | SUCCEEDED |
-| 2026-06-03 01:48 | SUCCEEDED |
+| 2026-06-12 09:51 | SUCCEEDED |
+| 2026-06-12 07:50 | SUCCEEDED |
+| 2026-06-12 05:51 | SUCCEEDED |
+| 2026-06-12 03:49 | SUCCEEDED |
+| 2026-06-12 01:50 | SUCCEEDED |
+| 2026-06-11 23:48 | SUCCEEDED |
+| 2026-06-11 21:50 | SUCCEEDED |
+| 2026-06-11 19:50 | SUCCEEDED |
 
 ## Definição (Amazon States Language)
 

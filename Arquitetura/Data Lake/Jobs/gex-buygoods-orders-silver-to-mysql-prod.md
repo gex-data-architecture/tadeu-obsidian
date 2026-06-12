@@ -4,8 +4,8 @@ ambiente: prod
 fluxo: to-mysql
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-01 13:28
-ultimo_estado: SUCCEEDED
+ultima_execucao: 2026-06-12 03:56
+ultimo_estado: FAILED
 tags: [datalake, glue-job]
 ---
 
@@ -45,6 +45,7 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
+| 2026-06-12 03:56 | FAILED | 2m7s | An error occurred while calling o200.save. Data truncation: Data too long for column 'client_name' at row 40 |
 | 2026-06-01 13:28 | SUCCEEDED | 2m44s | — |
 
 ## Script

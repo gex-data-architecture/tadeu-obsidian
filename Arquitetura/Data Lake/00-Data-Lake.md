@@ -6,7 +6,7 @@ tags: [datalake, indice]
 # 🗄️ Data Lake — Catálogo (AWS Glue)
 
 > Gerado da AWS Glue + Step Functions (conta 406933028738, `us-east-1`, perfil `buygoods`). **Não editar à mão** — regerável.
-> **40 tabelas** em 7 databases · **63 jobs** ETL · **20 Step Functions** · **17 crawlers** · **49 agendamentos**.
+> **44 tabelas** em 7 databases · **71 jobs** ETL · **23 Step Functions** · **25 crawlers** · **50 agendamentos**.
 > Arquitetura **medallion**: `landing → bronze → silver → gold → MySQL` (develop e prod).
 > Orquestração, cadeias e **agendamentos** (cron/rate): **[[00-Orquestracao]]**.
 
@@ -18,8 +18,8 @@ tags: [datalake, indice]
 | `gex_db_develop_bronze` | develop | bronze | 15 |
 | `gex_db_develop_gold` | develop | gold | 0 |
 | `gex_db_develop_silver` | develop | silver | 3 |
-| `gex_db_prod_bronze` | prod | bronze | 16 |
-| `gex_db_prod_gold` | prod | gold | 3 |
+| `gex_db_prod_bronze` | prod | bronze | 17 |
+| `gex_db_prod_gold` | prod | gold | 6 |
 | `gex_db_prod_silver` | prod | silver | 3 |
 
 ## Tabelas por database
@@ -52,6 +52,7 @@ tags: [datalake, indice]
 - [[gex_db_prod_bronze/tb_bronze_buygoods_internal_affiliates|tb_bronze_buygoods_internal_affiliates]]
 - [[gex_db_prod_bronze/tb_bronze_buygoods_products|tb_bronze_buygoods_products]]
 - [[gex_db_prod_bronze/tb_bronze_call_center_sales|tb_bronze_call_center_sales]]
+- [[gex_db_prod_bronze/tb_bronze_cartpanda_physical|tb_bronze_cartpanda_physical]]
 - [[gex_db_prod_bronze/tb_bronze_clickbank_fee_rates|tb_bronze_clickbank_fee_rates]]
 - [[gex_db_prod_bronze/tb_bronze_clickbank_internal_affiliates|tb_bronze_clickbank_internal_affiliates]]
 - [[gex_db_prod_bronze/tb_bronze_clickbank_products|tb_bronze_clickbank_products]]
@@ -65,9 +66,12 @@ tags: [datalake, indice]
 - [[gex_db_prod_bronze/tb_bronze_unified_lead_events_new|tb_bronze_unified_lead_events_new]]
 
 ### `gex_db_prod_gold`
+- [[gex_db_prod_gold/tb_gex_affiliate_nutra|tb_gex_affiliate_nutra]]
+- [[gex_db_prod_gold/tb_gex_affiliate_nutra_usd|tb_gex_affiliate_nutra_usd]]
 - [[gex_db_prod_gold/tb_gex_dashboard_channels_marketing|tb_gex_dashboard_channels_marketing]]
 - [[gex_db_prod_gold/tb_gex_gold_buygoods|tb_gex_gold_buygoods]]
 - [[gex_db_prod_gold/tb_gex_gold_clickbank|tb_gex_gold_clickbank]]
+- [[gex_db_prod_gold/tb_gex_gold_clickbank_buygoods|tb_gex_gold_clickbank_buygoods]]
 
 ### `gex_db_prod_silver`
 - [[gex_db_prod_silver/tb_buygoods_physical_new|tb_buygoods_physical_new]]
@@ -136,6 +140,10 @@ tags: [datalake, indice]
 - [[buygoods_bootstrap_mysql_tables]]
 - [[buygoods_bronze_extract]]
 - [[buygoods_bronze_to_silver]]
+- [[gex-affiliate-nutra-brl-develop]]
+- [[gex-affiliate-nutra-brl-prod]]
+- [[gex-affiliate-nutra-usd-develop]]
+- [[gex-affiliate-nutra-usd-prod]]
 - [[gex-buygoods-api-convert-develop]]
 - [[gex-buygoods-api-convert-prod]]
 - [[gex-buygoods-api-extract-prod]]
@@ -145,7 +153,11 @@ tags: [datalake, indice]
 - [[gex-buygoods-orders-bootstrap-mysql-prod]]
 - [[gex-buygoods-orders-extract-develop]]
 - [[gex-buygoods-orders-extract-prod]]
+- [[gex-cartpanda-bronze-develop]]
+- [[gex-cartpanda-bronze-prod]]
 - [[gex-docs-dev-extractor]]
+- [[gex-gold-clickbank-buygoods-develop]]
+- [[gex-gold-clickbank-buygoods-prod]]
 - [[gex-mysql-leads-heavy-prod]]
 - [[gex-silver-clickbank-dedup-oneshot]]
 - [[gold-dashboard-channels-marketing-develop]]
@@ -156,12 +168,15 @@ tags: [datalake, indice]
 Visão das cadeias e do grafo: **[[00-Orquestracao]]**.
 
 ### prod
+- [[gex-affiliate-nutra-prod]]
 - [[gex-bronze-to-silver-buygoods-prod]]
 - [[gex-bronze-to-silver-clickbank-prod]]
 - [[gex-buygoods-gold-prod]]
 - [[gex-buygoods-unified-to-mysql-prod]]
+- [[gex-cartpanda-bronze-prod]]
 - [[gex-clickbank-config-daily-prod]]
 - [[gex-clickbank-ingestion-old-prod]]
+- [[gex-gold-clickbank-buygoods-prod]]
 - [[gex-gold-dashboard-channels-marketing-prod]]
 - [[gex-gold-to-mysql-channels-marketing-prod]]
 - [[gex-mysql-leads-daily-prod]]
@@ -184,9 +199,13 @@ Visão das cadeias e do grafo: **[[00-Orquestracao]]**.
 ### `gex_db_develop_bronze`
 - [[gex-bronze-buygoods-api-crawler-develop]]
 - [[gex-bronze-crawler-develop]]
+- [[gex-buygoods-orders-bronze-crawler-develop]]
+- [[gex-cartpanda-bronze-crawler-develop]]
 
 ### `gex_db_develop_gold`
+- [[gex-affiliate-nutra-crawler-develop]]
 - [[gex-buygoods-gold-crawler-develop]]
+- [[gex-gold-clickbank-buygoods-crawler-develop]]
 - [[gex-gold-crawler-develop]]
 - [[gex-gold-dashboard-channels-marketing-crawler-develop]]
 
@@ -198,9 +217,13 @@ Visão das cadeias e do grafo: **[[00-Orquestracao]]**.
 ### `gex_db_prod_bronze`
 - [[gex-bronze-buygoods-api-crawler-prod]]
 - [[gex-bronze-crawler-prod]]
+- [[gex-buygoods-orders-bronze-crawler-prod]]
+- [[gex-cartpanda-bronze-crawler-prod]]
 
 ### `gex_db_prod_gold`
+- [[gex-affiliate-nutra-crawler-prod]]
 - [[gex-buygoods-gold-crawler-prod]]
+- [[gex-gold-clickbank-buygoods-crawler-prod]]
 - [[gex-gold-crawler-prod]]
 - [[gex-gold-dashboard-channels-marketing-crawler-prod]]
 
@@ -221,6 +244,7 @@ Horários (UTC), expressões e alvos: **[[00-Orquestracao]]**.
 - 🟢 `gex-bronze-to-silver-15min-prod` — todo dia a cada 2h (no min 05) UTC → [[gex-bronze-to-silver-clickbank-prod]]
 - 🟢 `gex-bronze-to-silver-buygoods-2h-prod` — todo dia a cada 2h (no min 30) UTC → [[gex-bronze-to-silver-buygoods-prod]]
 - 🟢 `gex-buygoods-api-polling-daily-develop` — a cada 1 day → gex-buygoods-api-polling-develop
+- 🟢 `gex-cartpanda-bronze-daily-prod` — todo dia às 06:00 UTC → [[gex-cartpanda-bronze-prod]]
 - 🟢 `gex-clickbank-config-daily-timer-prod` — todo dia às 01:00 UTC → [[gex-clickbank-config-daily-prod]]
 - 🟢 `gex-clickbank-glue-processing-prod` — todo dia a cada 15 min a partir do min 10 UTC → [[gex-landing-to-bronze-new-prod]]
 - 🟢 `gex-docs-dev-extractor-schedule` — seg às 09:00 UTC → [[gex-docs-dev-extractor]]

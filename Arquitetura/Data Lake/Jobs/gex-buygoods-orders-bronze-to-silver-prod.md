@@ -4,7 +4,7 @@ ambiente: prod
 fluxo: bronze-to-silver
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-01 13:23
+ultima_execucao: 2026-06-12 03:50
 ultimo_estado: SUCCEEDED
 tags: [datalake, glue-job]
 ---
@@ -47,6 +47,8 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
+| 2026-06-12 03:50 | SUCCEEDED | 5m25s | — |
+| 2026-06-11 14:41 | SUCCEEDED | 5m37s | — |
 | 2026-06-01 13:23 | SUCCEEDED | 3m42s | — |
 
 ## Script
@@ -423,19 +425,22 @@ total_price_usd_val = F.coalesce(F.col("total_amount_charged_v"), F.lit(0.0)) - 
 
 # commission_usd por status (sempre sobre colunas USD; base = total_price_usd)
 #   approved : total_price_usd - taxes_usd(merchant) - affiliate_amount_usd
-#   refunded : total_price_usd - affiliate_amount_usd - refund_fee_usd
-#   chargeback: total_price_usd - affiliate_amount_usd - chargeback_fee_usd
+#   refunded : total_price_usd - affiliate_amount_usd - total_refund_usd - refund_fee_usd
+#   chargeback: total_price_usd - affiliate_amount_usd - chargeback_fee_usd - total_refund_usd
+# Ajuste: subtrai tambem o total_refund_usd nos ciclos de devolucao/chargeback.
 commission_usd_expr = (
     F.when(
         F.col("is_chargeback"),
         total_price_usd_val
         - F.coalesce(F.col("aff_commission_v"), F.lit(0.0))
-        - F.coalesce(F.col("chargeback_fee_usd_v"), F.lit(0.0)),
+        - F.coalesce(F.col("chargeback_fee_usd_v"), F.lit(0.0))
+        - total_refund_usd_expr,
     )
      .when(
         F.col("is_refund"),
         total_price_usd_val
         - F.coalesce(F.col("aff_commission_v"), F.lit(0.0))
+        - total_refund_usd_expr
         - refund_fee_usd_expr,
     )
      .otherwise(

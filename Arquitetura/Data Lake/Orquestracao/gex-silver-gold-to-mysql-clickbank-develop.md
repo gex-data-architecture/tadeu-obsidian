@@ -2,7 +2,7 @@
 tipo: step-function
 ambiente: develop
 sfn_type: STANDARD
-ultima_execucao: 2026-06-03 14:20
+ultima_execucao: 2026-06-12 09:50
 ultimo_estado: FAILED
 tags: [datalake, step-function, orquestracao]
 ---
@@ -43,14 +43,14 @@ tags: [datalake, step-function, orquestracao]
 
 | Início | Estado |
 |---|---|
-| 2026-06-03 14:20 | FAILED |
-| 2026-06-03 13:50 | FAILED |
-| 2026-06-03 13:35 | FAILED |
-| 2026-06-03 13:20 | FAILED |
-| 2026-06-03 12:50 | FAILED |
-| 2026-06-03 12:35 | FAILED |
-| 2026-06-03 12:20 | FAILED |
-| 2026-06-03 11:50 | FAILED |
+| 2026-06-12 09:50 | FAILED |
+| 2026-06-12 09:35 | FAILED |
+| 2026-06-12 09:20 | FAILED |
+| 2026-06-12 08:50 | FAILED |
+| 2026-06-12 08:35 | FAILED |
+| 2026-06-12 08:20 | FAILED |
+| 2026-06-12 07:50 | FAILED |
+| 2026-06-12 07:35 | FAILED |
 
 ## Definição (Amazon States Language)
 

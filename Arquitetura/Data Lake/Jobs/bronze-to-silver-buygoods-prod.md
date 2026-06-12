@@ -4,7 +4,7 @@ ambiente: prod
 fluxo: bronze-to-silver
 tipo_job: glueetl
 glue_version: 4.0
-ultima_execucao: 2026-06-03 13:34
+ultima_execucao: 2026-06-12 09:34
 ultimo_estado: SUCCEEDED
 tags: [datalake, glue-job]
 ---
@@ -45,14 +45,14 @@ tags: [datalake, glue-job]
 
 | Início | Estado | Duração | Erro |
 |---|---|--:|---|
-| 2026-06-03 13:34 | SUCCEEDED | 6m46s | — |
-| 2026-06-03 13:14 | SUCCEEDED | 6m36s | — |
-| 2026-06-03 11:34 | SUCCEEDED | 7m7s | — |
-| 2026-06-03 09:34 | SUCCEEDED | 7m7s | — |
-| 2026-06-03 07:33 | SUCCEEDED | 6m58s | — |
-| 2026-06-03 05:33 | SUCCEEDED | 6m37s | — |
-| 2026-06-03 03:33 | SUCCEEDED | 6m53s | — |
-| 2026-06-03 01:33 | SUCCEEDED | 6m40s | — |
+| 2026-06-12 09:34 | SUCCEEDED | 9m21s | — |
+| 2026-06-12 07:33 | SUCCEEDED | 8m54s | — |
+| 2026-06-12 05:33 | SUCCEEDED | 9m10s | — |
+| 2026-06-12 03:32 | SUCCEEDED | 8m26s | — |
+| 2026-06-12 01:33 | SUCCEEDED | 9m17s | — |
+| 2026-06-11 23:32 | SUCCEEDED | 8m33s | — |
+| 2026-06-11 21:33 | SUCCEEDED | 8m56s | — |
+| 2026-06-11 19:34 | SUCCEEDED | 8m31s | — |
 
 ## Script
 
@@ -505,14 +505,17 @@ payment_status_expr = (
     .otherwise(F.lit("approved"))
 )
 
+# Ajuste: subtrai tambem o total_refund_usd nos ciclos de devolucao/chargeback.
+#   refunded/refunded_partial: total_amount_charged - aff_commission - total_refund_usd - refund_fee
+#   chargeback:                total_amount_charged - aff_commission - chargeback_fee - total_refund_usd
 commission_usd_expr = (
     F.when(
         payment_status_expr == "chargeback",
-        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - F.coalesce(F.col("chargeback_fee_usd_raw"), F.lit(0.0)),  # AJUSTE
+        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - F.coalesce(F.col("chargeback_fee_usd_raw"), F.lit(0.0)) - F.coalesce(total_refund_usd_corrected_expr, F.lit(0.0)),  # AJUSTE
     )
     .when(
         payment_status_expr.isin("refunded", "refunded_partial"),
-        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - refund_fee_usd_expr,  # AJUSTE
+        F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.lit(0.0) - F.coalesce(F.col("aff_commission"), F.lit(0.0)) - F.coalesce(total_refund_usd_corrected_expr, F.lit(0.0)) - refund_fee_usd_expr,  # AJUSTE
     )
     .otherwise(
         F.coalesce(F.col("total_amount_charged"), F.lit(0.0)) - F.coalesce(F.col("merchant_commission"), F.lit(0.0)) - F.coalesce(F.col("aff_commission"), F.lit(0.0))  # AJUSTE
